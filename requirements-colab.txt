@@ -1,0 +1,5 @@
+# Colab já vem com torch + CUDA instalados
+transformers>=4.56,<5
+peft>=0.15
+accelerate>=1.5
+matplotlib

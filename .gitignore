@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+outputs/*
+!outputs/.gitkeep
+!outputs/melhor/
+outputs/melhor/*
+!outputs/melhor/adapter_config.json
+!outputs/melhor/adapter_model.safetensors
+!outputs/melhor/ORIGEM.txt
+results/*_previsoes.jsonl
+resultados_colab.zip
+.gradio/
+results/experimentos.log

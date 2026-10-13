@@ -1,0 +1,8 @@
+# PC local (Windows, GTX 1060 / Pascal). Instale o PyTorch ANTES, com CUDA 12.6:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu126
+# (builds cu128/cu130 não incluem placas Pascal sm_61)
+transformers>=4.56,<5
+peft>=0.15
+accelerate>=1.5
+gradio>=5.0,<6
+matplotlib
