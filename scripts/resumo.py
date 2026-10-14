@@ -15,8 +15,8 @@ def carregar(p):
 
 
 def tabela_avaliacao(resultados, com_ineditos):
-    cab = "| Modelo | temp. | F1 | Precision | Recall | Vazamento % | Exato % | Similaridade |"
-    sep = "|---|---|---|---|---|---|---|---|"
+    cab = "| Modelo | temp. | F1 | Precision | Recall | Vazamento % | Vaz. parcial % | Exato % | Similaridade |"
+    sep = "|---|---|---|---|---|---|---|---|---|"
     if com_ineditos:
         cab += " F1 templates inéditos |"
         sep += "---|"
@@ -25,9 +25,9 @@ def tabela_avaliacao(resultados, com_ineditos):
     linhas = [cab, sep]
     for r in resultados:
         g = r["metricas"]["geral"]
-        nome = r["nome"].removeprefix("desafio2_").removeprefix("desafio_")
+        nome = r["nome"].removeprefix("desafio3_").removeprefix("desafio2_").removeprefix("desafio_")
         linha = (f"| {nome} | {r['temperature']} | {g['f1']} | {g['precision']} | {g['recall']} | "
-                 f"{g['vazamento_pct']} | {g['exato_pct']} | {g['similaridade']} |")
+                 f"{g['vazamento_pct']} | {g.get('vazamento_parcial_pct', '-')} | {g['exato_pct']} | {g['similaridade']} |")
         if com_ineditos:
             linha += f" {r['metricas'].get('templates_ineditos', {}).get('f1', '-')} |"
         linhas.append(linha + f" {r['tokens_por_s']} |")
@@ -45,7 +45,8 @@ def tabela_por_tipo(r):
 def main():
     todos = [carregar(p) for p in sorted(RES.glob("*.json"))]
     todos = [r for r in todos if "metricas" in r]
-    teste = [r for r in todos if not r["nome"].startswith(("desafio_", "desafio2_"))]
+    teste = [r for r in todos if not r["nome"].startswith(("desafio_", "desafio2_", "desafio3_"))]
+    desafio3 = [r for r in todos if r["nome"].startswith("desafio3_")]
     desafio = [r for r in todos if r["nome"].startswith("desafio_")]
     desafio2 = [r for r in todos if r["nome"].startswith("desafio2_")]
     por_nome = {r["nome"]: r for r in todos}
@@ -84,18 +85,24 @@ def main():
                    "Único conjunto independente de todos os treinos, inclusive do dataset v2.", ""]
         linhas += tabela_avaliacao(desafio2, com_ineditos=False)
 
+    if desafio3:
+        n = desafio3[0]["metricas"]["geral"]["n"]
+        linhas += ["", f"## Avaliação — desafio 3, escrito antes do exp7 ({n} textos)", "",
+                   "Único conjunto independente de todos os treinos, inclusive do dataset v3.", ""]
+        linhas += tabela_avaliacao(desafio3, com_ineditos=False)
+
     melhor_txt = OUTS / "melhor" / "ORIGEM.txt"
     if melhor_txt.exists():
         melhor = melhor_txt.read_text(encoding="utf-8").strip()
         linhas += ["", f"## Melhor modelo: `{melhor}`", ""]
         for titulo, nome in (("Teste sintético", melhor), ("Desafio", f"desafio_{melhor}"),
-                             ("Desafio 2", f"desafio2_{melhor}")):
+                             ("Desafio 2", f"desafio2_{melhor}"), ("Desafio 3", f"desafio3_{melhor}")):
             if nome in por_nome:
                 linhas += [f"**F1 por tipo de dado — {titulo}**", ""] + tabela_por_tipo(por_nome[nome]) + [""]
 
-        base, ajust = por_nome.get("desafio2_base"), por_nome.get(f"desafio2_{melhor}")
+        base, ajust = por_nome.get("desafio3_base"), por_nome.get(f"desafio3_{melhor}")
         if base and ajust:
-            linhas += ["## Exemplos do desafio 2: base × ajustado", ""]
+            linhas += ["## Exemplos do desafio 3: base × ajustado", ""]
             for a, b in list(zip(base["amostras"], ajust["amostras"]))[:6]:
                 linhas += [f"- **Entrada:** {a['input']}",
                            f"  - Base: {a['previsto']}",

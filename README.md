@@ -1,5 +1,7 @@
 # Anonimizador LGPD com LLM local (Qwen3-0.6B + LoRA)
 
+[![testes](https://github.com/ValottoEngineer/cp-llm-lgpd/actions/workflows/testes.yml/badge.svg)](https://github.com/ValottoEngineer/cp-llm-lgpd/actions/workflows/testes.yml)
+
 CP2/CP3 — 4ESPV-2026
 
 **Integrantes:**
@@ -18,6 +20,36 @@ trocando-os por marcadores, com frontend para o usuário testar.
 ```
 Entrada : Olá, meu nome é Fernanda Lima e meu CPF é 123.456.789-09. Quero cancelar o pedido #884512.
 Saída   : Olá, meu nome é [NOME] e meu CPF é [CPF]. Quero cancelar o pedido #884512.
+```
+
+### Visão geral do pipeline
+
+```mermaid
+flowchart LR
+    subgraph Dados
+        G["gerar_dataset.py<br/>templates sintéticos<br/>v1 → v2 → v3"]
+        S["gerar_geral.py<br/>perguntas gerais respondidas<br/>pelo modelo base"]
+        D["Desafios 1, 2 e 3<br/>escritos à mão"]
+    end
+    subgraph "Treino (GTX 1060)"
+        T["train.py<br/>Qwen3-0.6B + LoRA"]
+        E["experimentos.py<br/>rank · lr · épocas · dataset"]
+    end
+    subgraph Avaliação
+        A["evaluate.py + metrics.py<br/>F1 · vazamento · vazamento parcial"]
+        R["regex_pii.py<br/>camada de segurança"]
+        C["conhecimento_geral.py<br/>catastrophic forgetting"]
+    end
+    F["app.py<br/>frontend Gradio<br/>LoRA fundido"]
+    G --> T
+    S --> T
+    E --> T
+    T --> A
+    D --> A
+    A --> R
+    T --> C
+    T -->|melhor adaptador| F
+    R --> F
 ```
 
 ## Atendimento aos requisitos

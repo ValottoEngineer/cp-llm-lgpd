@@ -7,11 +7,30 @@ Métricas de avaliação da anonimização (não dependem de torch).
   (a métrica mais importante para LGPD: quanto menor, melhor).
 - exato: % de respostas idênticas à referência.
 - similaridade: quanto do texto não sensível foi preservado (difflib, 0 a 1).
+- vazamento parcial: % dos dados pessoais com algum PEDAÇO na resposta (ex.: o sobrenome, o usuário do
+  e-mail, um bloco de dígitos do CPF) que também não esteja na resposta esperada.
 """
+import re
 from collections import Counter
 from difflib import SequenceMatcher
 
 from common import MARCADOR_RE, TIPOS
+
+PALAVRAS_GENERICAS = {"rua", "avenida", "travessa", "alameda", "praça", "estrada", "apto", "bloco", "casa",
+                      "torre", "condomínio", "residencial", "edifício", "gmail", "hotmail", "outlook", "yahoo",
+                      "icloud", "empresa", "andar", "sala", "fundos", "municipal"}
+
+
+def pedacos(valor):
+    """Pedaços identificáveis de um dado: blocos de 3+ dígitos e palavras de 4+ letras (exceto genéricas)."""
+    partes = re.findall(r"\d+|[^\W\d_]+", valor.lower())
+    return [p for p in partes if (p.isdigit() and len(p) >= 3)
+            or (not p.isdigit() and len(p) >= 4 and p not in PALAVRAS_GENERICAS)]
+
+
+def vazou_parcial(valor, previsto, esperado):
+    prev, esp = previsto.lower(), esperado.lower()
+    return any(p in prev and p not in esp for p in pedacos(valor))
 
 
 def _prf(tp, fp, fn):
@@ -23,7 +42,7 @@ def _prf(tp, fp, fn):
 
 def avaliar(exemplos, previsoes):
     cont = {t: Counter() for t in TIPOS}
-    total_ent = vazados = exatos = 0
+    total_ent = vazados = parciais = exatos = 0
     sim = 0.0
     for ex, pred in zip(exemplos, previsoes):
         esperado = Counter(e["tipo"] for e in ex["entidades"])
@@ -36,6 +55,7 @@ def avaliar(exemplos, previsoes):
         for e in ex["entidades"]:
             total_ent += 1
             vazados += e["valor"] in pred
+            parciais += e["valor"] in pred or vazou_parcial(e["valor"], pred, ex["output"])
         exatos += pred.strip() == ex["output"].strip()
         sim += SequenceMatcher(None, pred, ex["output"]).ratio()
 
@@ -52,6 +72,7 @@ def avaliar(exemplos, previsoes):
     return {
         "precision": p, "recall": r, "f1": f,
         "vazamento_pct": round(100 * vazados / max(total_ent, 1), 2),
+        "vazamento_parcial_pct": round(100 * parciais / max(total_ent, 1), 2),
         "exato_pct": round(100 * exatos / n, 2),
         "similaridade": round(sim / n, 4),
         "n": len(previsoes),

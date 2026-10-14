@@ -61,7 +61,9 @@ def info_gpu():
     }
 
 
-def carregar_modelo(base=MODELO_BASE, adapter=None):
+def carregar_modelo(base=MODELO_BASE, adapter=None, merge=False):
+    """merge=True funde os pesos do LoRA no modelo (merge_adapter): a geração fica tão rápida quanto a do
+    modelo base, e dá para voltar ao base temporariamente com modo_base()."""
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -73,8 +75,34 @@ def carregar_modelo(base=MODELO_BASE, adapter=None):
     if adapter:
         from peft import PeftModel
         model = PeftModel.from_pretrained(model, adapter)
+        if merge:
+            model.merge_adapter()
     model.eval()
     return model, tok
+
+
+class modo_base:
+    """Contexto que desliga o adaptador LoRA (funciona com o adaptador fundido ou não)."""
+
+    def __init__(self, model):
+        self.model = model
+        self.fundido = getattr(model, "peft_config", None) is not None and any(
+            getattr(m, "merged", False) for m in model.modules())
+        self.ctx = None
+
+    def __enter__(self):
+        if self.fundido:
+            self.model.unmerge_adapter()
+        elif hasattr(self.model, "disable_adapter"):
+            self.ctx = self.model.disable_adapter()
+            self.ctx.__enter__()
+        return self.model
+
+    def __exit__(self, *exc):
+        if self.fundido:
+            self.model.merge_adapter()
+        elif self.ctx is not None:
+            self.ctx.__exit__(*exc)
 
 
 def anonimizar(model, tok, textos, max_new_tokens=256, temperature=0.0, top_p=0.9):
