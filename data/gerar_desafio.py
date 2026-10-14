@@ -78,6 +78,35 @@ CASOS_2 = [
     "Testemunha: {NOME:Gilberto Nascimento}, 45 anos, morador da {ENDERECO:Travessa do Ouvidor, 33}, {CEP:20040-030}, Rio de Janeiro/RJ.",
 ]
 
+# Desafio 3: escrito DEPOIS de analisar os erros do desafio 2 e ANTES de criar o dataset v3 e treinar o exp7.
+CASOS_3 = [
+    "Pode fazer o Pix para a chave {CPF:52833071946}? É da minha mãe, {NOME:Neusa Ferraz}.",
+    "Chave Pix: {TELEFONE:+5521987004411}. Favorecido: {NOME:Wagner Lopes}. Valor: R$ 75,00.",
+    "Mora no {ENDERECO:Residencial Parque das Árvores, torre 2, apto 1503}, {CEP:06454-000}, Barueri/SP.",
+    "Ontem a {NOME:Sueli} veio buscar a encomenda, mas o pacote estava em nome do {NOME:Henrique Bastos}.",
+    "O técnico da Vivo Empresas, CNPJ 02.558.157/0001-62, visitou o cliente {NOME:Mauro Teles} hoje.",
+    "{NOME:joana} pediu pra avisar que o {NOME:caio} vai atrasar, liga pra ela no {TELEFONE:(62) 98144-3002}",
+    "RG {RG:SP-38.221.904-5}, órgão emissor SSP, data de expedição 12/03/2015.",
+    "Segundo o protocolo 20260918-55, o cliente da Rua Halfeld (número não informado) reclamou do atraso.",
+    "Sra. {NOME:Ivone Matos}, 72 anos, viúva, solicitou a revisão do benefício. Telefone fixo: {TELEFONE:(14) 3222-8801}.",
+    "Para: {EMAIL:rh@alvesconsultoria.com.br}\nCc: {EMAIL:jessica.amaral@gmail.com}\nAssunto: documentos da admissão",
+    "A transportadora Rápido Sul Ltda entregou 14 volumes no galpão 3. Nota fiscal 001.284.551.",
+    "Bloco C, apartamento 42 — Sr. {NOME:Nilton} reclamou do vazamento. O síndico é o {NOME:Fernando Queiroz}.",
+    "Meu cadastro está com o CEP errado: o certo é {CEP:91420270}, não 91420-720.",
+    "Prezado(a) cliente, sua fatura de outubro no valor de R$ 89,90 já está disponível no app.",
+    "Encaminho o currículo da {NOME:Larissa Mendonça}: {EMAIL:larissa.mendonca@outlook.com}, {TELEFONE:47 99633-2108}, {ENDERECO:Rua XV de Novembro, 1180}, Blumenau.",
+    "O aluno {NOME:Pedro Henrique Cardoso} (matrícula 2026B0457) faltou às aulas de terça e quarta.",
+    "Emitir boleto para a Associação dos Moradores do Jardim Europa, CNPJ 45.987.112/0001-30.",
+    "Depois da cirurgia, o Seu {NOME:Raimundo} precisa de acompanhante. Contato da filha, {NOME:Cléo}: {TELEFONE:(91) 98270-5566}.",
+    "Login com problema: {EMAIL:thiago.r.alves@hotmail.com}. Último acesso às 22h14 pelo app Android.",
+    "Endereço de cobrança: {ENDERECO:Estrada Municipal dos Romeiros, km 12, sítio Boa Esperança}, {CEP:13250-971}.",
+    "{NOME:Kelly Cristina Moraes} e {NOME:Bruno Moraes}, CPFs {CPF:113.455.678-02} e {CPF:208.774.960-33}, assinam como fiadores.",
+    "A consulta com a nutricionista foi remarcada para 05/11 às 10h, na unidade Moema.",
+    "Quem ligou foi a {NOME:Tatiane Rezende}, do número {TELEFONE:21 3344-9087}, perguntando pelo reembolso do pedido 48812.",
+    "Oi, aqui é o {NOME:Murilo}, filho da dona {NOME:Teresa Pacheco}. Ela mudou para a {ENDERECO:Rua Bento Gonçalves, 77}.",
+    "Pedido 7721-B enviado pelos Correios. Rastreio: OQ553217840BR. Entrega estimada: 3 dias úteis.",
+]
+
 MARC_RE = re.compile(r"\{([A-Z]+):([^}]*)\}")
 
 
@@ -104,6 +133,7 @@ def salvar(casos, nome):
 def main():
     salvar(CASOS, "desafio")
     salvar(CASOS_2, "desafio2")
+    salvar(CASOS_3, "desafio3")
 
 
 if __name__ == "__main__":
