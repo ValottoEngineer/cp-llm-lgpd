@@ -64,17 +64,23 @@ def aplicar_regex(texto):
     return ONZE_DIGITOS.sub(onze, texto)
 
 
+TOKEN_RE = re.compile(r"\[[A-Z]+\]|\w+|[^\w\s]|\s+")
+
+
 def extrair_dados(original, anonimizado, marcador_re):
-    """Alinha o texto original com o anonimizado e devolve [(tipo, valor original)] de cada marcador."""
+    """Alinha o texto original com o anonimizado e devolve [(tipo, valor original)] de cada marcador.
+
+    O alinhamento é feito por palavras (cada marcador é um bloco só), para que letras do marcador,
+    como o "M" de [NOME], não casem com letras do dado original."""
+    a, b = TOKEN_RE.findall(original), TOKEN_RE.findall(anonimizado)
     achados = []
-    sm = SequenceMatcher(None, original, anonimizado, autojunk=False)
-    for op, i1, i2, j1, j2 in sm.get_opcodes():
+    for op, i1, i2, j1, j2 in SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
         if op not in ("replace", "insert"):
             continue
-        tipos = marcador_re.findall(anonimizado[j1:j2])
+        tipos = marcador_re.findall("".join(b[j1:j2]))
         if not tipos:
             continue
-        valor = original[i1:i2].strip(" ,;:")
+        valor = "".join(a[i1:i2]).strip(" ,;:")
         if len(tipos) == 1:
             achados.append((tipos[0], valor))
         else:  # vários marcadores colados: devolve o trecho inteiro para cada tipo

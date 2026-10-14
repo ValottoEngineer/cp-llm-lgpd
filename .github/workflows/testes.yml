@@ -14,5 +14,5 @@ jobs:
         with:
           python-version: "3.12"
       # Os testes cobrem dataset, métricas e regex: não precisam de torch nem de GPU.
-      - run: pip install pytest
+      - run: pip install -r requirements-dev.txt
       - run: pytest -q tests

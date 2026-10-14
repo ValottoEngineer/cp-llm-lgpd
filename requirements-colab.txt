@@ -1,5 +1,8 @@
-# Colab já vem com torch + CUDA instalados
-transformers>=4.56,<5
-peft>=0.15
-accelerate>=1.5
-matplotlib
+# Colab já vem com torch + CUDA instalados (GPU T4). Mesmas versões do projeto local:
+transformers==4.57.6
+tokenizers==0.22.2
+peft==0.21.2
+accelerate==1.15.0
+safetensors==0.8.0
+huggingface_hub==0.36.2
+matplotlib==3.11.2

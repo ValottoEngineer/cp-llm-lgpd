@@ -22,6 +22,32 @@ Entrada : Olá, meu nome é Fernanda Lima e meu CPF é 123.456.789-09. Quero can
 Saída   : Olá, meu nome é [NOME] e meu CPF é [CPF]. Quero cancelar o pedido #884512.
 ```
 
+## Resumo
+
+| | |
+|---|---|
+| **Problema** | Anonimização de dados pessoais (LGPD): trocar nome, CPF, RG, telefone, e-mail, endereço e CEP por marcadores, mantendo o resto do texto (pedidos, valores, CNPJ, protocolos). |
+| **Modelo** | **Qwen3-0.6B** + **LoRA** (1,67% dos parâmetros treinados), escolhido para caber numa **GTX 1060 6 GB** local, em fp32, com CUDA 12.6. |
+| **Dados** | 100% sintéticos, gerados por código próprio, em 3 versões, mais perguntas gerais respondidas pelo modelo base (autodestilação). |
+| **Experimentos** | 7 treinos em 3 rodadas (rank 8/16/32, lr 2e-4/5e-5, 1/2 épocas, dataset v1/v2/v3) + 3 temperaturas. |
+| **Avaliação** | Teste sintético (400) + **3 desafios escritos à mão**, cada um registrado no Git **antes** do treino que avalia + teste de conhecimento geral. |
+| **Resultado** | No desafio independente: vazamento de dados pessoais de **7,5% → 0%** e F1 de detecção de **0,42 → 0,98**, contra o modelo sem treino. |
+| **Extras** | Camada de segurança por regex, LoRA fundido (+61% de velocidade), frontend com texto, lote (.txt/.csv) e prompt livre, 32 testes no CI. |
+
+![Frontend](docs/frontend_anonimizar.png)
+
+**Rodar em 3 comandos** (Windows + GPU NVIDIA). O modelo treinado já vem no repositório:
+
+```bash
+pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
+```
+```bash
+pip install -r requirements.txt
+```
+```bash
+python app/app.py
+```
+
 ### Visão geral do pipeline
 
 ```mermaid
@@ -300,7 +326,18 @@ Respostas para *"O que significa a sigla LGPD?"*:
 O fine-tuning causa um *forgetting* **parcial**:
 
 - o exp2 chegou a **copiar o prompt** em vez de responder, que é o comportamento treinado na anonimização (devolver o mesmo texto);
-- a **autodestilação** do exp7 recuperou parte do conhecimento, de 64% para 71% de acerto, inclusive na pergunta sobre LGPD, e sem nenhum custo na anonimização.
+- a **autodestilação** do exp7 recuperou parte do conhecimento, de 64% para 71% de acerto, sem nenhum custo na anonimização. Ela **não elimina** o *forgetting*, porém: **muda onde ele aparece**.
+
+Por pergunta, comparado com os modelos anteriores:
+
+| Pergunta | Base | exp2 | exp6 | exp7 |
+|---|---|---|---|---|
+| O que significa a sigla LGPD? | ✅ | ❌ | ❌ | ✅ |
+| Traduza: "Meu pedido ainda não chegou." | ✅ | ✅ | ❌ | ✅ |
+| Corrija: "Nós vai na loja amanhã." | ✅ | ❌ | ✅ | ✅ |
+| **Qual é a capital do Brasil?** | ✅ | ✅ | ✅ | ❌ "São Paulo" |
+
+As perguntas que todos os modelos erram, inclusive o base (capital do RS, planeta vermelho, maior oceano), mostram o limite do próprio Qwen3-0.6B.
 
 ### LoRA fundido ao modelo (merge)
 
@@ -348,7 +385,7 @@ python -m venv .venv
 .venv\Scripts\activate
 ```
 ```bash
-pip install torch --index-url https://download.pytorch.org/whl/cu126
+pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
 ```
 ```bash
 pip install -r requirements.txt
@@ -409,10 +446,11 @@ a cada push (selo no topo do README).
 
 ### Alternativa: Google Colab (GPU T4)
 
-Para quem não tem GPU NVIDIA:
+Para quem não tem GPU NVIDIA. Todos os resultados deste README foram obtidos **localmente**, na GTX 1060; o
+notebook só serve para reproduzir o treino em outra máquina.
 
 1. Abra `notebooks/treino_colab.ipynb` no Colab e escolha o ambiente com **GPU T4**.
-2. Preencha `REPO_URL` com o link deste repositório e rode as células.
+2. Escolha o modo: **rápido** (só o modelo final, exp7) ou **completo** (as 3 rodadas). O notebook clona este repositório, roda os testes, treina, avalia e salva tudo no Google Drive.
 3. No final, baixe `resultados_colab.zip` e descompacte na raiz do projeto local. Ele traz `outputs/melhor/` e `results/`.
 
 ## 6. Frontend
@@ -486,7 +524,7 @@ scripts/benchmark_merge.py     velocidade do LoRA separado × fundido
 scripts/resumo.py              gera results/resumo.md e curvas_loss.png
 scripts/gpu_check.py           informações e teste da GPU
 app/app.py                     frontend Gradio (texto, arquivo/lote, prompt livre)
-tests/                         31 testes (pytest), rodados no GitHub Actions a cada push
+tests/                         32 testes (pytest), rodados no GitHub Actions a cada push
 notebooks/treino_colab.ipynb   alternativa de treino no Colab
 ```
 

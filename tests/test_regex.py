@@ -45,3 +45,10 @@ def test_extrair_dados():
     anonimizado = "Olá, meu nome é [NOME] e meu CPF é [CPF]. Liga no [TELEFONE]."
     assert extrair_dados(original, anonimizado, MARCADOR_RE) == [
         ("NOME", "Fernanda Lima Rocha"), ("CPF", "123.456.789-09"), ("TELEFONE", "(11) 98765-4321")]
+
+
+def test_extrair_dados_nao_casa_letras_do_marcador():
+    original = "Oi, sou o Marcos Alves, CPF 123.456.789-09, me liga no (11) 98765-4321."
+    anonimizado = "Oi, sou o [NOME], CPF [CPF], me liga no [TELEFONE]."
+    assert extrair_dados(original, anonimizado, MARCADOR_RE) == [
+        ("NOME", "Marcos Alves"), ("CPF", "123.456.789-09"), ("TELEFONE", "(11) 98765-4321")]

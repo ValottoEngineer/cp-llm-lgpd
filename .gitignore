@@ -14,3 +14,4 @@ resultados_colab.zip
 .gradio/
 results/experimentos*.log
 results/final*.log
+results/experimentos_seeds*.log
