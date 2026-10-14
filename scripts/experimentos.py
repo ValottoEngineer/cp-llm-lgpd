@@ -30,6 +30,8 @@ CONFIGS = [
     {"nome": "exp5_r16_lr2e-4_ep1", "r": 16, "alpha": 32, "lr": 2e-4, "epochs": 1},
     # Rodada 2: mesma configuração do melhor (exp2), com o dataset v2 (data/v2).
     {"nome": "exp6_r16_lr2e-4_ep2_v2", "r": 16, "alpha": 32, "lr": 2e-4, "epochs": 2, "data": "data/v2"},
+    # Rodada 3: dataset v3 (erros do desafio 2) + perguntas gerais respondidas pelo modelo base (self-distillation).
+    {"nome": "exp7_r16_lr2e-4_ep2_v3", "r": 16, "alpha": 32, "lr": 2e-4, "epochs": 2, "data": "data/v3"},
 ]
 TEMPERATURAS = [0.3, 0.7, 1.0]
 
@@ -87,9 +89,10 @@ def main():
 
     # Conjuntos de desafio escritos à mão (textos fora dos templates).
     desafio = RAIZ / "data" / "desafio.jsonl"
-    if not (RAIZ / "data" / "desafio2.jsonl").exists():
+    if not (RAIZ / "data" / "desafio3.jsonl").exists():
         rodar([PY, "data/gerar_desafio.py"])
-    for prefixo, arq in (("desafio_", "desafio.jsonl"), ("desafio2_", "desafio2.jsonl")):
+    for prefixo, arq in (("desafio_", "desafio.jsonl"), ("desafio2_", "desafio2.jsonl"),
+                         ("desafio3_", "desafio3.jsonl")):
         dados = RAIZ / "data" / arq
         if not (res / f"{prefixo}base.json").exists():
             rodar([PY, "src/evaluate.py", "--nome", f"{prefixo}base", "--data", dados])
@@ -98,8 +101,8 @@ def main():
                 rodar([PY, "src/evaluate.py", "--nome", f"{prefixo}{c['nome']}", "--adapter", outs / c["nome"],
                        "--data", dados])
 
-    # Melhor experimento: maior F1 no desafio 2 (o único independente de todos os treinos)
-    # -> menor vazamento no desafio 2 -> maior F1 no teste.
+    # Melhor experimento: maior F1 no desafio 3 (o único independente de todos os treinos, inclusive o v3)
+    # -> menor vazamento no desafio 3 -> maior F1 no teste.
     # (O critério inicial era o menor vazamento; com 42 dados no desafio 2, 1 dado de diferença
     #  não é significativo, então o F1, que combina precision e recall, virou o critério principal.)
     def geral(nome):
@@ -108,9 +111,9 @@ def main():
 
     candidatos = []
     for c in CONFIGS:
-        t, d, d2 = geral(c["nome"]), geral(f"desafio_{c['nome']}"), geral(f"desafio2_{c['nome']}")
-        if t and d and d2:
-            candidatos.append((d2["f1"], -d2["vazamento_pct"], t["f1"], c["nome"]))
+        t, d3 = geral(c["nome"]), geral(f"desafio3_{c['nome']}")
+        if t and d3:
+            candidatos.append((d3["f1"], -d3["vazamento_pct"], t["f1"], c["nome"]))
     if not candidatos:
         return
     melhor = max(candidatos)[-1]
@@ -119,7 +122,8 @@ def main():
     # Parâmetros de geração: temperatura, no teste e no desafio.
     for t in TEMPERATURAS:
         for prefixo, dados in (("", []), ("desafio_", ["--data", desafio]),
-                               ("desafio2_", ["--data", RAIZ / "data" / "desafio2.jsonl"])):
+                               ("desafio2_", ["--data", RAIZ / "data" / "desafio2.jsonl"]),
+                               ("desafio3_", ["--data", RAIZ / "data" / "desafio3.jsonl"])):
             nome = f"{prefixo}{melhor}_temp{t}"
             if not (res / f"{nome}.json").exists():
                 rodar([PY, "src/evaluate.py", "--nome", nome, "--adapter", outs / melhor,

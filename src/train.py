@@ -23,7 +23,12 @@ RAIZ = Path(__file__).resolve().parents[1]
 
 
 def tokenizar(ex, tok, max_len):
-    p_ids = tok(prompt_chat(tok, ex["input"]), add_special_tokens=False)["input_ids"]
+    if ex.get("geral"):  # pergunta geral (self-distillation): conversa comum, sem a instrução de anonimizar
+        prompt = tok.apply_chat_template([{"role": "user", "content": ex["input"]}], tokenize=False,
+                                         add_generation_prompt=True, enable_thinking=False)
+    else:
+        prompt = prompt_chat(tok, ex["input"])
+    p_ids = tok(prompt, add_special_tokens=False)["input_ids"]
     r_ids = tok(ex["output"] + FIM_RESPOSTA, add_special_tokens=False)["input_ids"]
     ids = (p_ids + r_ids)[:max_len]
     labels = ([-100] * len(p_ids) + r_ids)[:max_len]
@@ -61,6 +66,8 @@ def main():
     ap.add_argument("--max-len", type=int, default=384)
     ap.add_argument("--train-limit", type=int, default=None, help="usa só N exemplos (teste rápido)")
     ap.add_argument("--val-limit", type=int, default=150, help="exemplos de validação para o eval_loss")
+    ap.add_argument("--geral-repeat", type=int, default=2,
+                    help="se existir <data>/geral.jsonl, quantas vezes repetir essas perguntas gerais no treino")
     ap.add_argument("--eval-steps", type=int, default=25)
     ap.add_argument("--grad-checkpointing", action="store_true", help="economiza VRAM (GPUs de 6 GB)")
     ap.add_argument("--seed", type=int, default=42)
@@ -72,7 +79,13 @@ def main():
     print(f"GPU: {gpu} | precisão de treino: {prec}")
 
     tok = AutoTokenizer.from_pretrained(args.model)
-    train = [tokenizar(e, tok, args.max_len) for e in ler_jsonl(Path(args.data) / "train.jsonl", args.train_limit)]
+    exemplos = ler_jsonl(Path(args.data) / "train.jsonl", args.train_limit)
+    geral = Path(args.data) / "geral.jsonl"
+    if geral.exists():
+        extras = ler_jsonl(geral) * args.geral_repeat
+        print(f"Perguntas gerais (self-distillation): {len(extras)} exemplos")
+        exemplos += extras
+    train = [tokenizar(e, tok, args.max_len) for e in exemplos]
     val = [tokenizar(e, tok, args.max_len) for e in ler_jsonl(Path(args.data) / "val.jsonl", args.val_limit)]
 
     # Pesos em fp32; com fp16/bf16 o Trainer usa precisão mista (autocast).

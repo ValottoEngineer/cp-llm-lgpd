@@ -1,0 +1,20 @@
+{"prompt": "O que significa a sigla LGPD? Responda em uma frase.", "esperado": "proteção de dados"}
+{"prompt": "Qual é a capital do Brasil?", "esperado": "brasília"}
+{"prompt": "Explique em duas frases o que é um CPF.", "esperado": null}
+{"prompt": "Quanto é 15 vezes 4?", "esperado": "60"}
+{"prompt": "Escreva uma frase curta desejando bom dia a um cliente.", "esperado": "bom dia"}
+{"prompt": "Qual é a capital do Rio Grande do Sul?", "esperado": "porto alegre"}
+{"prompt": "Qual é a capital da Inglaterra?", "esperado": "londres"}
+{"prompt": "Quanto é 120 dividido por 4?", "esperado": "30"}
+{"prompt": "Quanto é 7 mais 8?", "esperado": "15"}
+{"prompt": "Traduza para o inglês: \"Meu pedido ainda não chegou.\"", "esperado": "order"}
+{"prompt": "Explique em poucas frases o que é a fotossíntese das algas marinhas.", "esperado": null}
+{"prompt": "O que são dados pessoais? Responda em uma frase.", "esperado": null}
+{"prompt": "Dê 3 dicas para proteger sua senha.", "esperado": null}
+{"prompt": "Escreva uma frase curta pedindo o número do pedido ao cliente.", "esperado": "pedido"}
+{"prompt": "Qual planeta é conhecido como planeta vermelho?", "esperado": "marte"}
+{"prompt": "Quantos dias tem uma semana?", "esperado": "7"}
+{"prompt": "Explique o que é um e-mail em uma frase.", "esperado": null}
+{"prompt": "Corrija o português: \"Nós vai na loja amanhã.\"", "esperado": "vamos"}
+{"prompt": "Escreva uma saudação de boas-vindas para um novo funcionário.", "esperado": null}
+{"prompt": "Qual é o maior oceano do mundo?", "esperado": "pacífico"}

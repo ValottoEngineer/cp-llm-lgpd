@@ -138,6 +138,25 @@ TEMPLATES_SEM_PII_V2 = [
     "Produto SKU {SKU} sem estoque em {CIDADE}.",
     "Emitir nota fiscal para {EMPRESA}, CNPJ {CNPJ}, no valor de {VALOR}.",
 ]
+# Templates da versão 3 (--v3, inclui a v2), criados a partir dos erros vistos no desafio 2:
+# chave Pix (CPF/telefone/e-mail sem rótulo), condomínios e residenciais, nome isolado no meio da frase.
+TEMPLATES_V3 = [
+    "Faz o Pix na chave {CPF_PIX}, está no nome de {NOME}.",
+    "Chave Pix {CPF_PIX} ({NOME}). Valor: {VALOR}.",
+    "Pode mandar o Pix pro {TELEFONE_PIX}, é do {PRIMEIRO}.",
+    "Minha chave Pix é o e-mail {EMAIL}. Obrigado!",
+    "Cadastrar chave Pix {CPF_PIX} em nome de {NOME} para o reembolso do pedido {PEDIDO}.",
+    "Entregar no {CONDOMINIO}, {CEP}, falar com {NOME}.",
+    "Moro no {CONDOMINIO}. Meu nome é {NOME} e o telefone é {TELEFONE}.",
+    "Endereço de entrega: {CONDOMINIO} - {CIDADE}. Destinatário: {PRIMEIRO}.",
+    "Ontem a {PRIMEIRO} passou aqui e deixou o documento do {NOME}.",
+    "A {PRIMEIRO} ligou do {TELEFONE} pedindo para falar com o {PRIMEIRO_2}.",
+    "Avisa a {PRIMEIRO} que o {PRIMEIRO_2} chegou na recepção.",
+    "Hoje o {PRIMEIRO} não veio; quem cobriu o turno foi a {NOME}.",
+    "Ficha: {NOME} ; {RG} ; {CEP} ; {CIDADE}",
+    "{NOME} | RG {RG} | {TELEFONE}",
+    "Inscrição: {NOME} - {CPF} - nascida em {ANO}.",
+]
 EMPRESAS = ["Ramos & Filhos Ltda", "Padaria Pão Dourado", "TechNova Sistemas S.A.", "Mercado Bom Preço",
             "Construtora Alicerce Ltda", "Farmácia Vida", "Auto Peças Silva ME", "Clínica Bem Estar",
             "Distribuidora Andrade", "Escola Pequeno Saber"]
@@ -154,7 +173,9 @@ TEMPLATES_SEM_PII = [
     "Quero trocar o {PRODUTO} por outro modelo, é possível?",
 ]
 
-PH_RE = re.compile(r"\{([A-Z]+)(?:_(\d))?\}")
+PH_RE = re.compile(r"\{([A-Z]+(?:_[A-Z]+)?)(?:_(\d))?\}")
+# Placeholders especiais -> tipo de dado pessoal no marcador.
+TIPO_MARCADOR = {"PRIMEIRO": "NOME", "CPF_PIX": "CPF", "TELEFONE_PIX": "TELEFONE", "CONDOMINIO": "ENDERECO"}
 
 
 def _sem_acento(s):
@@ -212,6 +233,17 @@ def gerar_email(rng, nome=None):
     return f"{usuario}@{rng.choice(DOMINIOS)}"
 
 
+CONDOMINIOS = ["Condomínio Jardim das Flores", "Residencial Bela Vista", "Condomínio Parque dos Ipês",
+               "Residencial Vila Verde", "Edifício Solar das Águas", "Condomínio Recanto do Sol"]
+
+
+def gerar_condominio(rng):
+    c = rng.choice(CONDOMINIOS)
+    return rng.choice([f"{c}, bloco {rng.choice('ABCD123')}, apto {rng.randint(11, 1504)}",
+                       f"{c}, torre {rng.randint(1, 6)}, apto {rng.randint(11, 1504)}",
+                       f"{c}, casa {rng.randint(1, 200)}"])
+
+
 def gerar_endereco(rng):
     end = f"{rng.choice(TIPOS_LOGRADOURO)} {rng.choice(NOMES_LOGRADOURO)}, {rng.randint(1, 3500)}"
     if rng.random() < 0.3:
@@ -256,6 +288,8 @@ def gerar_distrator(tipo, rng):
         return f"{rng.randint(18, 90)} anos"
     if tipo == "LEITO":
         return f"{rng.randint(1, 30)}{rng.choice('ABCD')}"
+    if tipo == "ANO":
+        return str(rng.randint(1950, 2008))
     if tipo == "SKU":
         return f"{rng.randint(100, 999)}-{rng.choice(['AZ', 'BX', 'KT', 'PR'])}-{rng.randint(10, 99)}"
     raise ValueError(tipo)
@@ -283,6 +317,12 @@ def preencher(template, rng, informal=False):
                 nome_principal = nome_principal or v
             elif tipo == "CPF":
                 v = gerar_cpf(rng)
+            elif tipo == "CPF_PIX":  # chave Pix: CPF só com dígitos
+                v = gerar_cpf(rng).replace(".", "").replace("-", "")
+            elif tipo == "TELEFONE_PIX":  # chave Pix: telefone no formato +55DDDNÚMERO
+                v = f"+55{rng.choice(DDDS)}9{rng.randint(10000000, 99999999)}"
+            elif tipo == "CONDOMINIO":
+                v = gerar_condominio(rng)
             elif tipo == "RG":
                 v = gerar_rg(rng)
             elif tipo == "TELEFONE":
@@ -295,13 +335,13 @@ def preencher(template, rng, informal=False):
                 v = gerar_cep(rng)
             else:
                 v = gerar_distrator(tipo, rng)
-            if informal and tipo in ("NOME", "PRIMEIRO") and rng.random() < 0.5:
+            if informal and TIPO_MARCADOR.get(tipo, tipo) == "NOME" and rng.random() < 0.5:
                 v = v.lower()
             valores[chave] = v
 
         v = valores[chave]
         entrada.append(v)
-        tipo_pii = "NOME" if tipo == "PRIMEIRO" else tipo
+        tipo_pii = TIPO_MARCADOR.get(tipo, tipo)
         if tipo_pii in PII:
             saida.append(f"[{tipo_pii}]")
             entidades.append({"tipo": tipo_pii, "valor": v})
@@ -346,12 +386,14 @@ def main():
     ap.add_argument("--holdout", type=int, default=8,
                     help="templates reservados só para o teste (medem generalização)")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--v3", action="store_true", help="inclui os templates da versão 3 (implica --v2)")
     ap.add_argument("--v2", action="store_true",
                     help="inclui os templates da versão 2 (CNPJ/empresas, nome isolado, títulos, listas)")
     ap.add_argument("--out", default=str(Path(__file__).parent))
     args = ap.parse_args()
 
     rng = random.Random(args.seed)
+    args.v2 = args.v2 or args.v3
     if args.v2:
         SEM_PII.extend(TEMPLATES_SEM_PII_V2)
     indexados = [(f"t{i}", t) for i, t in enumerate(TEMPLATES)]
@@ -359,6 +401,8 @@ def main():
     ineditos, vistos = indexados[:args.holdout], indexados[args.holdout:]
     if args.v2:  # os templates v2 entram sempre no treino
         vistos += [(f"v2_{i}", t) for i, t in enumerate(TEMPLATES_V2)]
+    if args.v3:
+        vistos += [(f"v3_{i}", t) for i, t in enumerate(TEMPLATES_V3)]
 
     train = gerar_exemplos(args.n_train, vistos, random.Random(args.seed + 1), True)
     val = gerar_exemplos(args.n_val, vistos, random.Random(args.seed + 2), True)
