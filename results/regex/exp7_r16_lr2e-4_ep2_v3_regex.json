@@ -1,0 +1,59 @@
+{
+  "nome": "LLM (exp7) + regex",
+  "conjunto": "Teste sintético",
+  "metricas": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "f1_deteccao": 1.0,
+    "vazamento_pct": 0.0,
+    "vazamento_parcial_pct": 0.0,
+    "exato_pct": 100.0,
+    "similaridade": 1.0,
+    "n": 400,
+    "por_tipo": {
+      "NOME": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 397
+      },
+      "CPF": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 129
+      },
+      "RG": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 49
+      },
+      "TELEFONE": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 157
+      },
+      "EMAIL": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 89
+      },
+      "ENDERECO": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 51
+      },
+      "CEP": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 56
+      }
+    }
+  }
+}

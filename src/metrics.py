@@ -7,6 +7,7 @@ Métricas de avaliação da anonimização (não dependem de torch).
   (a métrica mais importante para LGPD: quanto menor, melhor).
 - exato: % de respostas idênticas à referência.
 - similaridade: quanto do texto não sensível foi preservado (difflib, 0 a 1).
+- F1 de detecção: como o F1, mas ignorando o tipo do marcador (trocar [EMAIL] por [NOME] não é vazamento).
 - vazamento parcial: % dos dados pessoais com algum PEDAÇO na resposta (ex.: o sobrenome, o usuário do
   e-mail, um bloco de dígitos do CPF) que também não esteja na resposta esperada.
 """
@@ -43,6 +44,7 @@ def _prf(tp, fp, fn):
 def avaliar(exemplos, previsoes):
     cont = {t: Counter() for t in TIPOS}
     total_ent = vazados = parciais = exatos = 0
+    det = Counter()  # detecção sem considerar o tipo do marcador
     sim = 0.0
     for ex, pred in zip(exemplos, previsoes):
         esperado = Counter(e["tipo"] for e in ex["entidades"])
@@ -52,6 +54,10 @@ def avaliar(exemplos, previsoes):
             cont[t]["tp"] += min(g, p)
             cont[t]["fp"] += max(0, p - g)
             cont[t]["fn"] += max(0, g - p)
+        g_tot, p_tot = sum(esperado.values()), sum(previsto.values())
+        det["tp"] += min(g_tot, p_tot)
+        det["fp"] += max(0, p_tot - g_tot)
+        det["fn"] += max(0, g_tot - p_tot)
         for e in ex["entidades"]:
             total_ent += 1
             vazados += e["valor"] in pred
@@ -71,6 +77,7 @@ def avaliar(exemplos, previsoes):
     n = max(len(previsoes), 1)
     return {
         "precision": p, "recall": r, "f1": f,
+        "f1_deteccao": _prf(det["tp"], det["fp"], det["fn"])[2],
         "vazamento_pct": round(100 * vazados / max(total_ent, 1), 2),
         "vazamento_parcial_pct": round(100 * parciais / max(total_ent, 1), 2),
         "exato_pct": round(100 * exatos / n, 2),

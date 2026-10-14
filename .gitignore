@@ -13,3 +13,4 @@ outputs/melhor/*
 resultados_colab.zip
 .gradio/
 results/experimentos*.log
+results/final*.log

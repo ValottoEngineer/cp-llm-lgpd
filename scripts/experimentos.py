@@ -101,10 +101,9 @@ def main():
                 rodar([PY, "src/evaluate.py", "--nome", f"{prefixo}{c['nome']}", "--adapter", outs / c["nome"],
                        "--data", dados])
 
-    # Melhor experimento: maior F1 no desafio 3 (o único independente de todos os treinos, inclusive o v3)
-    # -> menor vazamento no desafio 3 -> maior F1 no teste.
-    # (O critério inicial era o menor vazamento; com 42 dados no desafio 2, 1 dado de diferença
-    #  não é significativo, então o F1, que combina precision e recall, virou o critério principal.)
+    # Melhor experimento, no desafio 3 (o único independente de todos os treinos, inclusive o v3):
+    # 1) menor vazamento (para LGPD, deixar passar um dado pessoal é o erro mais grave);
+    # 2) se a diferença de vazamento for de no máximo 1 dado (não significativa), vence o maior F1.
     def geral(nome):
         p = res / f"{nome}.json"
         return json.loads(p.read_text(encoding="utf-8"))["metricas"]["geral"] if p.exists() else None
@@ -113,10 +112,14 @@ def main():
     for c in CONFIGS:
         t, d3 = geral(c["nome"]), geral(f"desafio3_{c['nome']}")
         if t and d3:
-            candidatos.append((d3["f1"], -d3["vazamento_pct"], t["f1"], c["nome"]))
+            n_ent = sum(len(json.loads(l)["entidades"]) for l in open(RAIZ / "data" / "desafio3.jsonl", encoding="utf-8"))
+            vazados = round(d3["vazamento_pct"] * n_ent / 100)
+            candidatos.append((vazados, d3["f1"], t["f1"], c["nome"]))
     if not candidatos:
         return
-    melhor = max(candidatos)[-1]
+    menor = min(c[0] for c in candidatos)
+    empatados = [c for c in candidatos if c[0] <= menor + 1]
+    melhor = max(empatados, key=lambda c: (c[1], c[2], -c[0]))[-1]
     print(f"\nMelhor experimento: {melhor}")
 
     # Parâmetros de geração: temperatura, no teste e no desafio.

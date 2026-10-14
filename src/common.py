@@ -91,18 +91,18 @@ class modo_base:
         self.ctx = None
 
     def __enter__(self):
-        if self.fundido:
+        if self.fundido:  # tira os pesos do LoRA de dentro do modelo...
             self.model.unmerge_adapter()
-        elif hasattr(self.model, "disable_adapter"):
+        if hasattr(self.model, "disable_adapter"):  # ...e desliga o adaptador
             self.ctx = self.model.disable_adapter()
             self.ctx.__enter__()
         return self.model
 
     def __exit__(self, *exc):
+        if self.ctx is not None:
+            self.ctx.__exit__(*exc)
         if self.fundido:
             self.model.merge_adapter()
-        elif self.ctx is not None:
-            self.ctx.__exit__(*exc)
 
 
 def anonimizar(model, tok, textos, max_new_tokens=256, temperature=0.0, top_p=0.9):

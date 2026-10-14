@@ -1,0 +1,59 @@
+{
+  "nome": "Só regex (sem LLM)",
+  "conjunto": "Desafio 3",
+  "metricas": {
+    "precision": 1.0,
+    "recall": 0.425,
+    "f1": 0.5965,
+    "f1_deteccao": 0.5965,
+    "vazamento_pct": 60.0,
+    "vazamento_parcial_pct": 62.5,
+    "exato_pct": 36.0,
+    "similaridade": 0.8586,
+    "n": 25,
+    "por_tipo": {
+      "NOME": {
+        "precision": 1.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "suporte": 19
+      },
+      "CPF": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 3
+      },
+      "RG": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 1
+      },
+      "TELEFONE": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 6
+      },
+      "EMAIL": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 4
+      },
+      "ENDERECO": {
+        "precision": 1.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "suporte": 4
+      },
+      "CEP": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 3
+      }
+    }
+  }
+}

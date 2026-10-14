@@ -1,0 +1,59 @@
+{
+  "nome": "LLM (exp6) + regex",
+  "conjunto": "Desafio 3",
+  "metricas": {
+    "precision": 0.975,
+    "recall": 0.975,
+    "f1": 0.975,
+    "f1_deteccao": 0.975,
+    "vazamento_pct": 5.0,
+    "vazamento_parcial_pct": 7.5,
+    "exato_pct": 80.0,
+    "similaridade": 0.9538,
+    "n": 25,
+    "por_tipo": {
+      "NOME": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 19
+      },
+      "CPF": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 3
+      },
+      "RG": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 1
+      },
+      "TELEFONE": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 6
+      },
+      "EMAIL": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 4
+      },
+      "ENDERECO": {
+        "precision": 0.75,
+        "recall": 0.75,
+        "f1": 0.75,
+        "suporte": 4
+      },
+      "CEP": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 3
+      }
+    }
+  }
+}

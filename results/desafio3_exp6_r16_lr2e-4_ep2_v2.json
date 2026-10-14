@@ -1,0 +1,206 @@
+{
+  "nome": "desafio3_exp6_r16_lr2e-4_ep2_v2",
+  "modelo": "Qwen/Qwen3-0.6B",
+  "adapter": "C:\\Users\\POV\\Desktop\\cp-llm-lgpd\\outputs\\exp6_r16_lr2e-4_ep2_v2",
+  "temperature": 0.0,
+  "top_p": 0.9,
+  "gpu": {
+    "gpu": "NVIDIA GeForce GTX 1060 6GB",
+    "compute_capability": "6.1",
+    "vram_gb": 6.0,
+    "torch": "2.14.1+cu126",
+    "cuda": "12.6",
+    "precisao": "fp32"
+  },
+  "tempo_s": 8.4,
+  "tokens_por_s": 99.0,
+  "metricas": {
+    "geral": {
+      "precision": 0.9722,
+      "recall": 0.875,
+      "f1": 0.9211,
+      "f1_deteccao": 0.9211,
+      "vazamento_pct": 12.5,
+      "vazamento_parcial_pct": 15.0,
+      "exato_pct": 76.0,
+      "similaridade": 0.9447,
+      "n": 25,
+      "por_tipo": {
+        "NOME": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 19
+        },
+        "CPF": {
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1": 0.8,
+          "suporte": 3
+        },
+        "RG": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 1
+        },
+        "TELEFONE": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 6
+        },
+        "EMAIL": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 4
+        },
+        "ENDERECO": {
+          "precision": 0.75,
+          "recall": 0.75,
+          "f1": 0.75,
+          "suporte": 4
+        },
+        "CEP": {
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "suporte": 3
+        }
+      }
+    },
+    "templates_ineditos": {
+      "precision": 0.9722,
+      "recall": 0.875,
+      "f1": 0.9211,
+      "f1_deteccao": 0.9211,
+      "vazamento_pct": 12.5,
+      "vazamento_parcial_pct": 15.0,
+      "exato_pct": 76.0,
+      "similaridade": 0.9447,
+      "n": 25,
+      "por_tipo": {
+        "NOME": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 19
+        },
+        "CPF": {
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1": 0.8,
+          "suporte": 3
+        },
+        "RG": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 1
+        },
+        "TELEFONE": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 6
+        },
+        "EMAIL": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 4
+        },
+        "ENDERECO": {
+          "precision": 0.75,
+          "recall": 0.75,
+          "f1": 0.75,
+          "suporte": 4
+        },
+        "CEP": {
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "suporte": 3
+        }
+      }
+    }
+  },
+  "amostras": [
+    {
+      "input": "Pode fazer o Pix para a chave 52833071946? É da minha mãe, Neusa Ferraz.",
+      "esperado": "Pode fazer o Pix para a chave [CPF]? É da minha mãe, [NOME].",
+      "previsto": "Pode fazer o Pix para a chave 52833071946? É da minha mãe, [NOME]."
+    },
+    {
+      "input": "Chave Pix: +5521987004411. Favorecido: Wagner Lopes. Valor: R$ 75,00.",
+      "esperado": "Chave Pix: [TELEFONE]. Favorecido: [NOME]. Valor: R$ 75,00.",
+      "previsto": "Chave Pix: [TELEFONE]. Favorecido: [NOME]. Valor: R$ 75,00."
+    },
+    {
+      "input": "Mora no Residencial Parque das Árvores, torre 2, apto 1503, 06454-000, Barueri/SP.",
+      "esperado": "Mora no [ENDERECO], [CEP], Barueri/SP.",
+      "previsto": "Mora no Residencial Parque das Árvores, torre 2, apto 1503, 06454-000, Barueri/SP."
+    },
+    {
+      "input": "Ontem a Sueli veio buscar a encomenda, mas o pacote estava em nome do Henrique Bastos.",
+      "esperado": "Ontem a [NOME] veio buscar a encomenda, mas o pacote estava em nome do [NOME].",
+      "previsto": "Ontem a [NOME] veio buscar a encomenda, mas o pacote estava em nome do [NOME]."
+    },
+    {
+      "input": "O técnico da Vivo Empresas, CNPJ 02.558.157/0001-62, visitou o cliente Mauro Teles hoje.",
+      "esperado": "O técnico da Vivo Empresas, CNPJ 02.558.157/0001-62, visitou o cliente [NOME] hoje.",
+      "previsto": "O técnico da Vivo Empresas, CNPJ 02.558.157/0001-62, visitou o cliente [NOME] hoje."
+    },
+    {
+      "input": "joana pediu pra avisar que o caio vai atrasar, liga pra ela no (62) 98144-3002",
+      "esperado": "[NOME] pediu pra avisar que o [NOME] vai atrasar, liga pra ela no [TELEFONE]",
+      "previsto": "[NOME] pediu pra avisar que o [NOME] vai atrasar, liga pra ela no [TELEFONE]."
+    },
+    {
+      "input": "RG SP-38.221.904-5, órgão emissor SSP, data de expedição 12/03/2015.",
+      "esperado": "RG [RG], órgão emissor SSP, data de expedição 12/03/2015.",
+      "previsto": "RG [RG], órgão emissor SSP, data de expedição 12/03/2015."
+    },
+    {
+      "input": "Segundo o protocolo 20260918-55, o cliente da Rua Halfeld (número não informado) reclamou do atraso.",
+      "esperado": "Segundo o protocolo 20260918-55, o cliente da Rua Halfeld (número não informado) reclamou do atraso.",
+      "previsto": "Segundo o protocolo 20260918-55, o cliente da [ENDERECO] reclamou do atraso."
+    },
+    {
+      "input": "Sra. Ivone Matos, 72 anos, viúva, solicitou a revisão do benefício. Telefone fixo: (14) 3222-8801.",
+      "esperado": "Sra. [NOME], 72 anos, viúva, solicitou a revisão do benefício. Telefone fixo: [TELEFONE].",
+      "previsto": "Sra. [NOME], 72 anos, viúva, solicitou a revisão do benefício. Telefone fixo: [TELEFONE]."
+    },
+    {
+      "input": "Para: rh@alvesconsultoria.com.br\nCc: jessica.amaral@gmail.com\nAssunto: documentos da admissão",
+      "esperado": "Para: [EMAIL]\nCc: [EMAIL]\nAssunto: documentos da admissão",
+      "previsto": "Para: [EMAIL]\nCc: [EMAIL]\nAssunto: documentos da admissão"
+    },
+    {
+      "input": "A transportadora Rápido Sul Ltda entregou 14 volumes no galpão 3. Nota fiscal 001.284.551.",
+      "esperado": "A transportadora Rápido Sul Ltda entregou 14 volumes no galpão 3. Nota fiscal 001.284.551.",
+      "previsto": "A transportadora Rápido Sul Ltda entregou 14 volumes no galpão 3. Nota fiscal 001.284.551."
+    },
+    {
+      "input": "Bloco C, apartamento 42 — Sr. Nilton reclamou do vazamento. O síndico é o Fernando Queiroz.",
+      "esperado": "Bloco C, apartamento 42 — Sr. [NOME] reclamou do vazamento. O síndico é o [NOME].",
+      "previsto": "Bloco C, apartamento 42 — Sr. [NOME] reclamou do vazamento. O síndico é o [NOME]."
+    },
+    {
+      "input": "Meu cadastro está com o CEP errado: o certo é 91420270, não 91420-720.",
+      "esperado": "Meu cadastro está com o CEP errado: o certo é [CEP], não 91420-720.",
+      "previsto": "Meu cadastro está com o CEP errado: o certo é 91420270, não 91420-720."
+    },
+    {
+      "input": "Prezado(a) cliente, sua fatura de outubro no valor de R$ 89,90 já está disponível no app.",
+      "esperado": "Prezado(a) cliente, sua fatura de outubro no valor de R$ 89,90 já está disponível no app.",
+      "previsto": "Prezado(a) cliente, sua fatura de outubro no valor de R$ 89,90 já está disponível no app."
+    },
+    {
+      "input": "Encaminho o currículo da Larissa Mendonça: larissa.mendonca@outlook.com, 47 99633-2108, Rua XV de Novembro, 1180, Blumenau.",
+      "esperado": "Encaminho o currículo da [NOME]: [EMAIL], [TELEFONE], [ENDERECO], Blumenau.",
+      "previsto": "Encaminho o currículo da [NOME]: [EMAIL], [TELEFONE], [ENDERECO], Blumenau."
+    }
+  ]
+}

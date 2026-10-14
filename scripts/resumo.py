@@ -44,7 +44,7 @@ def tabela_por_tipo(r):
 
 def main():
     todos = [carregar(p) for p in sorted(RES.glob("*.json"))]
-    todos = [r for r in todos if "metricas" in r]
+    todos = [r for r in todos if "metricas" in r and "nome" in r]
     teste = [r for r in todos if not r["nome"].startswith(("desafio_", "desafio2_", "desafio3_"))]
     desafio3 = [r for r in todos if r["nome"].startswith("desafio3_")]
     desafio = [r for r in todos if r["nome"].startswith("desafio_")]

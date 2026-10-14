@@ -1,0 +1,59 @@
+{
+  "nome": "Só regex (sem LLM)",
+  "conjunto": "Teste sintético",
+  "metricas": {
+    "precision": 1.0,
+    "recall": 0.4881,
+    "f1": 0.656,
+    "f1_deteccao": 0.656,
+    "vazamento_pct": 51.19,
+    "vazamento_parcial_pct": 53.88,
+    "exato_pct": 15.75,
+    "similaridade": 0.8283,
+    "n": 400,
+    "por_tipo": {
+      "NOME": {
+        "precision": 1.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "suporte": 397
+      },
+      "CPF": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 129
+      },
+      "RG": {
+        "precision": 1.0,
+        "recall": 0.5714,
+        "f1": 0.7273,
+        "suporte": 49
+      },
+      "TELEFONE": {
+        "precision": 1.0,
+        "recall": 0.9618,
+        "f1": 0.9805,
+        "suporte": 157
+      },
+      "EMAIL": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 89
+      },
+      "ENDERECO": {
+        "precision": 1.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "suporte": 51
+      },
+      "CEP": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "suporte": 56
+      }
+    }
+  }
+}

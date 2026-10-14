@@ -33,3 +33,8 @@ def test_grupos_vistos_e_ineditos():
     inedito = {**EX, "visto": False}
     r = avaliar_por_grupo([EX, inedito], [EX["output"], EX["input"]])
     assert r["templates_vistos"]["f1"] == 1.0 and r["templates_ineditos"]["f1"] == 0.0
+
+
+def test_f1_deteccao_ignora_tipo():
+    m = avaliar([EX], ["Sou [EMAIL], CPF [CPF], pedido 4471."])
+    assert m["f1"] < 1.0 and m["f1_deteccao"] == 1.0 and m["vazamento_pct"] == 0

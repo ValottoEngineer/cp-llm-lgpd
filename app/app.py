@@ -63,7 +63,8 @@ def ler_arquivo(caminho, coluna):
         linhas = list(csv.DictReader(io.StringIO(bruto), dialect=dialeto))
         if not linhas:
             raise gr.Error("CSV vazio.")
-        col = coluna.strip() or next(iter(linhas[0]))
+        # coluna vazia: usa a que tem os textos mais longos (em geral, a da mensagem)
+        col = coluna.strip() or max(linhas[0], key=lambda c: sum(len(l[c] or "") for l in linhas))
         if col not in linhas[0]:
             raise gr.Error(f"Coluna '{col}' não encontrada. Colunas: {', '.join(linhas[0])}")
         textos = [l[col] or "" for l in linhas]
@@ -71,7 +72,7 @@ def ler_arquivo(caminho, coluna):
         def montar(saidas):
             buf = io.StringIO()
             campos = list(linhas[0]) + [f"{col}_anonimizado"]
-            w = csv.DictWriter(buf, fieldnames=campos, delimiter=dialeto.delimiter)
+            w = csv.DictWriter(buf, fieldnames=campos, delimiter=dialeto.delimiter, lineterminator="\n")
             w.writeheader()
             for l, s in zip(linhas, saidas):
                 w.writerow({**l, f"{col}_anonimizado": s})
@@ -212,8 +213,11 @@ def main():
             with gr.Row():
                 with gr.Column(scale=2):
                     arquivo = gr.File(label="Arquivo", file_types=[".txt", ".csv"], type="filepath")
+                    exemplo_csv = RAIZ / "docs" / "exemplo_lote.csv"
+                    if exemplo_csv.exists():
+                        gr.Examples([[str(exemplo_csv)]], inputs=arquivo, label="Exemplo (dados fictícios)")
                 with gr.Column(scale=1):
-                    coluna = gr.Textbox(label="Coluna do CSV (vazio = primeira coluna)")
+                    coluna = gr.Textbox(label="Coluna do CSV (vazio = coluna com os textos mais longos)")
                     regex_lote = gr.Checkbox(value=True, label="Camada de segurança (regex)")
                     botao_lote = gr.Button("Anonimizar arquivo", variant="primary")
             previa = gr.Dataframe(headers=["Original", "Anonimizado"], label="Prévia (20 primeiras linhas)",
