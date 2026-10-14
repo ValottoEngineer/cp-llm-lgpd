@@ -1,0 +1,255 @@
+{
+  "nome": "base",
+  "modelo": "Qwen/Qwen3-0.6B",
+  "adapter": null,
+  "temperature": 0.0,
+  "top_p": 0.9,
+  "gpu": {
+    "gpu": "NVIDIA GeForce GTX 1060 6GB",
+    "compute_capability": "6.1",
+    "vram_gb": 6.0,
+    "torch": "2.14.1+cu126",
+    "cuda": "12.6",
+    "precisao": "fp32"
+  },
+  "tempo_s": 491.5,
+  "tokens_por_s": 35.0,
+  "metricas": {
+    "geral": {
+      "precision": 0.2717,
+      "recall": 0.8556,
+      "f1": 0.4125,
+      "vazamento_pct": 8.3,
+      "exato_pct": 0.5,
+      "similaridade": 0.5037,
+      "n": 400,
+      "por_tipo": {
+        "NOME": {
+          "precision": 0.7153,
+          "recall": 0.7657,
+          "f1": 0.7397,
+          "suporte": 397
+        },
+        "CPF": {
+          "precision": 0.3482,
+          "recall": 0.969,
+          "f1": 0.5123,
+          "suporte": 129
+        },
+        "RG": {
+          "precision": 0.14,
+          "recall": 1.0,
+          "f1": 0.2456,
+          "suporte": 49
+        },
+        "TELEFONE": {
+          "precision": 0.3067,
+          "recall": 0.9045,
+          "f1": 0.4581,
+          "suporte": 157
+        },
+        "EMAIL": {
+          "precision": 0.1972,
+          "recall": 0.9663,
+          "f1": 0.3276,
+          "suporte": 89
+        },
+        "ENDERECO": {
+          "precision": 0.0948,
+          "recall": 0.8235,
+          "f1": 0.17,
+          "suporte": 51
+        },
+        "CEP": {
+          "precision": 0.1031,
+          "recall": 0.8214,
+          "f1": 0.1833,
+          "suporte": 56
+        }
+      }
+    },
+    "templates_vistos": {
+      "precision": 0.2918,
+      "recall": 0.8734,
+      "f1": 0.4374,
+      "vazamento_pct": 11.79,
+      "exato_pct": 1.0,
+      "similaridade": 0.5636,
+      "n": 200,
+      "por_tipo": {
+        "NOME": {
+          "precision": 0.6758,
+          "recall": 0.8605,
+          "f1": 0.757,
+          "suporte": 172
+        },
+        "CPF": {
+          "precision": 0.3464,
+          "recall": 0.9538,
+          "f1": 0.5082,
+          "suporte": 65
+        },
+        "RG": {
+          "precision": 0.16,
+          "recall": 1.0,
+          "f1": 0.2759,
+          "suporte": 28
+        },
+        "TELEFONE": {
+          "precision": 0.2488,
+          "recall": 0.8095,
+          "f1": 0.3806,
+          "suporte": 63
+        },
+        "EMAIL": {
+          "precision": 0.2292,
+          "recall": 0.9362,
+          "f1": 0.3682,
+          "suporte": 47
+        },
+        "ENDERECO": {
+          "precision": 0.2143,
+          "recall": 0.8235,
+          "f1": 0.3401,
+          "suporte": 51
+        },
+        "CEP": {
+          "precision": 0.122,
+          "recall": 0.7812,
+          "f1": 0.211,
+          "suporte": 32
+        }
+      }
+    },
+    "templates_ineditos": {
+      "precision": 0.254,
+      "recall": 0.8383,
+      "f1": 0.3899,
+      "vazamento_pct": 4.89,
+      "exato_pct": 0.0,
+      "similaridade": 0.4437,
+      "n": 200,
+      "por_tipo": {
+        "NOME": {
+          "precision": 0.7573,
+          "recall": 0.6933,
+          "f1": 0.7239,
+          "suporte": 225
+        },
+        "CPF": {
+          "precision": 0.35,
+          "recall": 0.9844,
+          "f1": 0.5164,
+          "suporte": 64
+        },
+        "RG": {
+          "precision": 0.12,
+          "recall": 1.0,
+          "f1": 0.2143,
+          "suporte": 21
+        },
+        "TELEFONE": {
+          "precision": 0.3527,
+          "recall": 0.9681,
+          "f1": 0.517,
+          "suporte": 94
+        },
+        "EMAIL": {
+          "precision": 0.1721,
+          "recall": 1.0,
+          "f1": 0.2937,
+          "suporte": 42
+        },
+        "ENDERECO": {
+          "precision": 0.0,
+          "recall": 1.0,
+          "f1": 0.0,
+          "suporte": 0
+        },
+        "CEP": {
+          "precision": 0.0871,
+          "recall": 0.875,
+          "f1": 0.1585,
+          "suporte": 24
+        }
+      }
+    }
+  },
+  "amostras": [
+    {
+      "input": "Atualização cadastral: novo telefone 71 99288-4246, novo CEP 41906-853.",
+      "esperado": "Atualização cadastral: novo telefone [TELEFONE], novo CEP [CEP].",
+      "previsto": "Atualização cadastral: [NOME], novo telefone [71 99288-4246], novo CEP [41906-853]."
+    },
+    {
+      "input": "Seguem meus dados para o reembolso: Rafael Martins, CPF 91895922631, valor R$ 280,00.",
+      "esperado": "Seguem meus dados para o reembolso: [NOME], CPF [CPF], valor R$ 280,00.",
+      "previsto": "Seguem meus dados para o reembolso: [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "Seguem meus dados para o reembolso: Lucas Pinto, CPF 622.164.281-75, valor R$ 6.892,43.",
+      "esperado": "Seguem meus dados para o reembolso: [NOME], CPF [CPF], valor R$ 6.892,43.",
+      "previsto": "Seguem meus dados para o reembolso: [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "Assinado por Aline Pereira Freitas Souza - beatriz745@gmail.com - 91 3186-7801",
+      "esperado": "Assinado por [NOME] - [EMAIL] - [TELEFONE]",
+      "previsto": "[Aline Pereira Freitas Souza] [CPF] [TELEFONE] [EMAIL] [ENDERECO] [CEP]"
+    },
+    {
+      "input": "quero trocar o micro-ondas por outro modelo, é possível?",
+      "esperado": "quero trocar o micro-ondas por outro modelo, é possível?",
+      "previsto": "Quero trocar o micro-ondas por outro modelo, é possível."
+    },
+    {
+      "input": "Me chamo André Rocha Gomes Monteiro, moro na Rua Independência, 326 e quero saber se vocês entregam no CEP 98775-993.",
+      "esperado": "Me chamo [NOME], moro na [ENDERECO] e quero saber se vocês entregam no CEP [CEP].",
+      "previsto": "[NOME], [RG], [TELEFONE], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "oi, aqui é Fernanda Gonçalves Santos, me liga no (81) 96819-5088 quando puder",
+      "esperado": "oi, aqui é [NOME], me liga no [TELEFONE] quando puder",
+      "previsto": "oi, [NOME], [TELEFONE], [CEP], [EMAIL], [ENDERECO], [RG], [CPF]."
+    },
+    {
+      "input": "Meu RG é 135559026 e meu CPF é 49201994494, estou mandando para completar o cadastro.",
+      "esperado": "Meu RG é [RG] e meu CPF é [CPF], estou mandando para completar o cadastro.",
+      "previsto": "[NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "Protocolo 4165251844 encerrado às 08:15.",
+      "esperado": "Protocolo 4165251844 encerrado às 08:15.",
+      "previsto": "[Protocolo 4165251844] encerrado às 08:15."
+    },
+    {
+      "input": "Ligação recebida do número (92) 92533-2515 às 13h30. Solicitante: Vanessa Cardoso Cavalcanti. Protocolo 2097057786.",
+      "esperado": "Ligação recebida do número [TELEFONE] às 13h30. Solicitante: [NOME]. Protocolo 2097057786.",
+      "previsto": "[LIGAÇÃO RECEBIDA DO NÚMERO (92) 92533-2515 às 13h30. Solicitante: [NOME] [CPF] [RG] [TELEFONE] [EMAIL] [ENDERECO] [CEP]. Protocolo 2097057786."
+    },
+    {
+      "input": "Indicação: Mariana Souza Dias indicou Mariana Lopes Ferreira para o programa. Contato do indicado: (85) 4389-4210.",
+      "esperado": "Indicação: [NOME] indicou [NOME] para o programa. Contato do indicado: [TELEFONE].",
+      "previsto": "[NOME] indicou [NOME] para o programa. Contato do indicado: [TELEFONE]."
+    },
+    {
+      "input": "Matrícula do aluno Matheus Soares Gonçalves, responsável Ana Dias, telefone do responsável 8548560154.",
+      "esperado": "Matrícula do aluno [NOME], responsável [NOME], telefone do responsável [TELEFONE].",
+      "previsto": "[NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "Quero cancelar a assinatura. Titular Vinícius Santana, e-mail vsantana@bol.com.br, protocolo anterior 5030400469.",
+      "esperado": "Quero cancelar a assinatura. Titular [NOME], e-mail [EMAIL], protocolo anterior 5030400469.",
+      "previsto": "[NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "Indicação: André Pinto indicou Francisco Moreira Rocha para o programa. Contato do indicado: (85)918486712.",
+      "esperado": "Indicação: [NOME] indicou [NOME] para o programa. Contato do indicado: [TELEFONE].",
+      "previsto": "[NOME] indicou [ENDERECO] para o programa. Contato do indicado: [TELEFONE]."
+    },
+    {
+      "input": "Quero cancelar a assinatura. Titular Bruno Ferreira, e-mail bruno84@icloud.com, protocolo anterior 3855330844.",
+      "esperado": "Quero cancelar a assinatura. Titular [NOME], e-mail [EMAIL], protocolo anterior 3855330844.",
+      "previsto": "Quero cancelar a assinatura. [NOME], [TELEFONE], [EMAIL], [ENDERECO], [CEP], protocolo anterior 3855330844."
+    }
+  ]
+}

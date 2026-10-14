@@ -28,7 +28,7 @@ Saída   : Olá, meu nome é [NOME] e meu CPF é [CPF]. Quero cancelar o pedido 
 | 2 | Problema específico | [O problema](#2-o-problema) · `data/gerar_dataset.py` |
 | 3 | Testar diferentes parâmetros | [Experimentos](#3-experimentos-e-parâmetros) · `scripts/experimentos.py` |
 | 4 | Avaliar o modelo (respostas) | [Avaliação](#4-avaliação) · `src/evaluate.py`, `src/metrics.py`, `results/` |
-| 5 | Testes utilizando GPU | Treino em GPU T4 (Colab) + inferência na GTX 1060 local |
+| 5 | Testes utilizando GPU | Treino, avaliação e frontend na **GTX 1060 6 GB local** (CUDA 12.6) |
 | 6 | Frontend para prompts | [Frontend](#6-frontend) · `app/app.py` |
 | 7 | Print da GPU no VSCode | [GPU no VSCode](#7-gpu-funcionando-no-vscode) · `docs/` |
 | 8 | Documentação e código no GitHub | este repositório |
@@ -40,7 +40,7 @@ Saída   : Olá, meu nome é [NOME] e meu CPF é [CPF]. Quero cancelar o pedido 
 - **Hardware do grupo:** a GPU local é uma **GTX 1060 6 GB** (arquitetura Pascal, compute capability 6.1). Ela não acelera fp16/bf16, então treino e inferência locais rodam em fp32. Em fp32, o 0.6B ocupa ~2,4 GB e sobra memória para o LoRA. Modelos de 1–2B ficam no limite dos 6 GB.
 - **Português:** o Qwen3 é multilíngue e entende bem PT-BR.
 - **Suporte:** funciona direto no `transformers` e no `peft`, sem kernels especiais. Modelos com arquiteturas mais novas, como Qwen 3.5 e Gemma 4, podem depender de componentes que não rodam em Windows com GPU Pascal.
-- **Técnica:** LoRA em todas as projeções de atenção e MLP. Só ~1–2% dos parâmetros são treinados.
+- **Técnica:** LoRA em todas as projeções de atenção e MLP. Só **1,67% dos parâmetros** são treinados (10,1 M de 606 M) com rank 16.
 
 ### Versão do CUDA
 
@@ -86,15 +86,23 @@ o número de épocas e, na geração, a temperatura.
 | exp4 | 16 | 32 | 5e-5 | 2 |
 | exp5 | 16 | 32 | 2e-4 | 1 |
 
-Fixos: batch 8 × acumulação 2 (efetivo 16), scheduler cosseno, warmup 5%, dropout 0,05,
+Fixos: batch efetivo 16 (na GTX 1060: batch 4 × acumulação 4 com gradient checkpointing, escolhido
+automaticamente para GPUs com menos de 8 GB), scheduler cosseno, warmup 5%, dropout 0,05,
 comprimento máximo 384 tokens, seed 42. A perda é calculada **só sobre a resposta**: os tokens do prompt são mascarados.
 
-O melhor adaptador, pelo maior F1 e com o menor vazamento como desempate, é avaliado também com
-temperaturas 0,3 / 0,7 / 1,0, para medir o efeito da amostragem.
+O melhor adaptador é escolhido pelo **menor vazamento no conjunto de desafio**, com o F1 no desafio e depois o
+F1 no teste como desempates. Ele é copiado para `outputs/melhor/` e avaliado também com temperaturas
+0,3 / 0,7 / 1,0, para medir o efeito da amostragem.
 
 ## 4. Avaliação
 
-`src/metrics.py`, no conjunto de teste (400 exemplos):
+Dois conjuntos de avaliação, com as mesmas métricas de `src/metrics.py`:
+
+- **Teste sintético** (400 exemplos): metade com templates vistos no treino, metade com 8 templates inéditos.
+- **Desafio escrito à mão** (30 textos, 57 dados pessoais; `data/gerar_desafio.py`): redação livre e textos longos, com várias pessoas no mesmo texto, formatos incomuns (`cpf: 398 114 027 61`, e-mail escrito "arroba", RG com UF) e distratores que **não** são dados pessoais (CNPJ, rastreio, protocolo, SKU, cupom). 6 dos textos não têm nenhum dado pessoal.
+
+| Métrica | O que mede |
+|---|---|
 
 | Métrica | O que mede |
 |---|---|
@@ -108,19 +116,73 @@ Também medimos o desempenho de geração (tokens/s) e o pico de VRAM no treino.
 
 ### Resultados
 
-> As tabelas abaixo saem de `results/resumo.md`, gerado automaticamente por `scripts/resumo.py`.
+Todos os números foram medidos na **GTX 1060 6 GB** local, em fp32. As tabelas completas, incluindo
+precision e recall por experimento, estão em [`results/resumo.md`](results/resumo.md), e as respostas de
+cada modelo em `results/*.json`.
 
-_(colar aqui o conteúdo de `results/resumo.md` e a imagem `results/curvas_loss.png`)_
+#### Treino
+
+| Experimento | rank | alpha | lr | épocas | train loss | eval loss | tempo | pico VRAM |
+|---|---|---|---|---|---|---|---|---|
+| exp1 | 8 | 16 | 2e-4 | 2 | 0,0167 | 0,00010 | 42,3 min | 4,24 GB |
+| **exp2** | **16** | **32** | **2e-4** | **2** | 0,0133 | 0,00007 | 36,5 min | 4,31 GB |
+| exp3 | 32 | 64 | 2e-4 | 2 | 0,0112 | 0,00004 | 35,0 min | 4,46 GB |
+| exp4 | 16 | 32 | 5e-5 | 2 | 0,0228 | 0,00024 | 34,2 min | 4,31 GB |
+| exp5 | 16 | 32 | 2e-4 | 1 | 0,0224 | 0,00030 | 20,3 min | 4,29 GB |
+
+![Curvas de loss](results/curvas_loss.png)
+
+#### Avaliação (temperatura 0)
+
+| Modelo | F1 teste | Vazamento teste | Exato teste | **F1 desafio** | **Vazamento desafio** | Exato desafio |
+|---|---|---|---|---|---|---|
+| Base (sem treino) | 0,412 | 8,3% | 0,5% | 0,300 | 14,0% | 0% |
+| exp1 (r=8) | 0,9995 | 0% | 99,5% | **0,938** | 3,5% | 73,3% |
+| **exp2 (r=16)** ⭐ | **1,000** | **0%** | **100%** | 0,922 | **1,75%** | 73,3% |
+| exp3 (r=32) | 0,9995 | 0% | 99,75% | 0,904 | 3,5% | 60,0% |
+| exp4 (lr=5e-5) | 0,991 | 0% | 93,25% | 0,919 | 3,5% | 60,0% |
+| exp5 (1 época) | 0,9995 | 0% | 99,75% | 0,922 | 5,3% | 73,3% |
+
+⭐ **Melhor modelo: exp2.** O critério é o **menor vazamento no desafio**, porque, para LGPD, deixar passar
+um dado pessoal é o erro mais grave. O desempate é feito pelo F1 no desafio e depois pelo F1 no teste.
+
+#### Parâmetros de geração (temperatura), com o exp2
+
+| Temperatura | F1 teste | Exato teste | F1 desafio | Vazamento desafio | Exato desafio |
+|---|---|---|---|---|---|
+| 0 (greedy) | 1,000 | 100% | 0,922 | 1,75% | 73,3% |
+| 0,3 | 1,000 | 100% | 0,922 | 3,51% | 70,0% |
+| 0,7 | 0,9995 | 99,75% | 0,922 | 1,75% | 73,3% |
+| 1,0 | 0,9995 | 99,75% | 0,931 | 1,75% | 73,3% |
+
+#### Exemplos do desafio: base × ajustado
+
+| Entrada | Modelo base | Modelo ajustado (exp2) |
+|---|---|---|
+| `cpf: 398 114 027 61 nome: Rodrigo Tavares — quero o reembolso ...` | `[cpf: 398 114 027 61] [RG: 123456789012345678] [TELEFONE: 1234567890] ...` ❌ não anonimiza e inventa dados | `cpf: [CPF] nome: [NOME] — quero o reembolso ...` ✅ |
+| `Pode mandar a nota pro email financeiro.ramos@outlook.com? A empresa é Ramos & Filhos Ltda, CNPJ 12.345.678/0001-95.` | `Pode mandar a nota pro email [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]. ...` ❌ | `Pode mandar a nota pro email [EMAIL]? A empresa é [NOME], CNPJ [CPF].` ⚠️ e-mail certo, mas empresa e CNPJ não são dados pessoais |
+| `Kátia aqui, do RH. O Fábio Nunes pediu para alterar o telefone de emergência para (47) 98811-2093.` | `[KATEIA] aqui, do RH. [FABIO] Nunes pediu ... para [47] 98811-2093.` ❌ vaza sobrenome e telefone | `Kátia aqui, do RH. O [NOME] pediu ... para [TELEFONE].` ⚠️ o nome isolado no início escapou |
+
+### Análise
+
+1. **O fine-tuning resolve a tarefa.** O modelo base entende a instrução, mas inventa marcadores (precision de 0,27), reescreve o texto e deixa vazar 8–14% dos dados. Com LoRA, o F1 vai de **0,41 para 1,00** no teste e de **0,30 para 0,92** no desafio, e o vazamento cai de 14% para **1,75%**.
+2. **O teste sintético satura.** Quatro das cinco configurações passam de 99,5% de acerto exato, inclusive nos templates inéditos. Por isso o desafio escrito à mão é necessário para diferenciar as configurações.
+3. **Rank do LoRA.** Os ranks 8 e 16 generalizaram melhor que o 32. O exp3 tem a **menor loss de validação** e o **pior F1 no desafio**: com mais parâmetros, ele se ajustou demais ao estilo dos templates (*overfitting*). Loss de validação baixa não garante generalização.
+4. **Learning rate.** Com 5e-5 (exp4), o modelo aprende mais devagar: tem a maior eval loss e o pior acerto exato no teste (93%). Em 2 épocas, 2e-4 foi melhor.
+5. **Épocas.** Com 1 época (exp5), o resultado no teste é quase o mesmo e o treino leva metade do tempo, mas o vazamento no desafio é o maior (5,3%). A segunda época ajudou na robustez.
+6. **Temperatura.** Ela quase não afeta o resultado: o modelo ficou muito confiante nessa tarefa, com uma distribuição de probabilidade concentrada. Para anonimização, usamos **temperatura 0**, que é determinística e reprodutível.
+7. **Erros que restam no desafio:**
+   - tratar CNPJ e nome de empresa como dado pessoal;
+   - deixar escapar um nome sozinho no início da frase;
+   - apagar palavras próximas aos dados (`54 anos`, `recepção`, `Dr.`);
+   - inventar marcadores em listas compactas.
+
+   Todos vêm de padrões ausentes do dataset sintético, e o caminho para corrigi-los é ampliar os templates.
+8. **Desempenho.** A geração fica em ~95 tok/s em lote (avaliação) e ~13–22 tok/s numa requisição única no frontend. O treino usa no máximo 4,5 GB de VRAM com gradient checkpointing; sem ele, o pico chega a 8 GB e transborda para a RAM do sistema, deixando o treino 2× mais lento.
 
 ## 5. Como executar
 
-### Treino no Google Colab (GPU T4)
-
-1. Abra `notebooks/treino_colab.ipynb` no Colab e escolha o ambiente com **GPU T4**.
-2. Preencha `REPO_URL` com o link deste repositório e rode as células.
-3. No final, baixe `resultados_colab.zip` e descompacte na raiz do projeto local. Ele traz `outputs/melhor/` e `results/`.
-
-### Local (Windows + GTX 1060)
+### Local (Windows + GTX 1060): o ambiente usado no projeto
 
 ```bash
 python -m venv .venv
@@ -138,14 +200,41 @@ pip install -r requirements.txt
 python scripts/gpu_check.py
 ```
 
-Avaliar e treinar localmente (opcional; mais lento em fp32):
+O adaptador do melhor modelo já vem no repositório (`outputs/melhor/`, ~40 MB), então o frontend roda logo
+após o clone:
 
 ```bash
-python src/evaluate.py --nome melhor_local --adapter outputs/melhor
+python app/app.py
+```
+
+Reproduzir todos os experimentos (~3h30 na GTX 1060). Os que já terminaram são pulados:
+
+```bash
+python data/gerar_dataset.py
 ```
 ```bash
-python src/train.py --out outputs/local_r16 --r 16 --alpha 32 --batch 4 --grad-accum 4 --grad-checkpointing
+python scripts/experimentos.py
 ```
+
+Treinar ou avaliar uma configuração isolada:
+
+```bash
+python src/train.py --out outputs/meu_teste --r 16 --alpha 32 --lr 2e-4 --epochs 2 --batch 4 --grad-accum 4 --grad-checkpointing
+```
+```bash
+python src/evaluate.py --nome meu_teste --adapter outputs/meu_teste
+```
+```bash
+python src/evaluate.py --nome desafio_meu_teste --adapter outputs/meu_teste --data data/desafio.jsonl
+```
+
+### Alternativa: Google Colab (GPU T4)
+
+Para quem não tem GPU NVIDIA:
+
+1. Abra `notebooks/treino_colab.ipynb` no Colab e escolha o ambiente com **GPU T4**.
+2. Preencha `REPO_URL` com o link deste repositório e rode as células.
+3. No final, baixe `resultados_colab.zip` e descompacte na raiz do projeto local. Ele traz `outputs/melhor/` e `results/`.
 
 ## 6. Frontend
 
@@ -171,6 +260,16 @@ python app/app.py
 
 Abre em http://127.0.0.1:7860.
 
+**Aba "Anonimizar texto".** O modelo base inventa `[RG]`, `[ENDERECO]` e `[CEP]` que não existem no texto; o ajustado marca exatamente os dados presentes e mantém o número do pedido.
+
+![Frontend: anonimizar](docs/frontend_anonimizar.png)
+
+**Aba "Prompt livre".** Nesta aba aparece um efeito colateral do fine-tuning, o *catastrophic forgetting*. Em perguntas gerais, o modelo ajustado piora: inventa que a LGPD seria "Laws Against Discrimination" e repete itens. O modelo base responde corretamente.
+
+Isso acontece porque o adaptador foi treinado só para anonimizar. Por isso o frontend permite desligar o LoRA ("Base (sem treino)"). Em produção, o adaptador seria usado apenas na tarefa de anonimização.
+
+![Frontend: prompt livre](docs/frontend_prompt_livre.png)
+
 ## 7. GPU funcionando no VSCode
 
 Extensões utilizadas: **GPU Monitor** (`Maimonator.gpu-monitor`) e **GPU Environments** (`run-ai.vscode-genv`), recomendadas em `.vscode/extensions.json`.
@@ -186,6 +285,7 @@ de VRAM ocupados pelo treino, e a extensão **GPU Monitor**, na barra de status,
 
 ```
 data/gerar_dataset.py      gera train/val/test.jsonl
+data/gerar_desafio.py      gera desafio.jsonl (30 textos escritos à mão)
 src/common.py              prompt, carregamento do modelo, geração
 src/train.py               fine-tuning LoRA
 src/evaluate.py            avaliação no teste -> results/<nome>.json
@@ -197,8 +297,20 @@ app/app.py                 frontend Gradio
 notebooks/treino_colab.ipynb  treino no Colab
 ```
 
-## Limitações
+## Limitações e próximos passos
 
-- O dataset é sintético. Textos reais têm mais variações, como nomes raros, erros de digitação e dados em tabelas.
-- Um nome sozinho, como "Ana", pode ser ambíguo. O modelo tende a seguir os padrões vistos no treino.
-- O modelo é pequeno (0.6B), escolhido pela restrição de hardware. Um modelo de 1.7B–4B treinado no Colab tende a generalizar melhor.
+- **Dataset sintético.** O teste sintético satura (F1 ≈ 1,0), mas no desafio o F1 cai para ~0,92. Textos reais têm mais variações, como nomes raros, erros de digitação e dados em tabelas. Próximo passo: ampliar os templates com CNPJ e empresas (não pessoais), nomes isolados, títulos (Dr., Sr.) e listas compactas.
+- **Ambiguidade.** Um nome sozinho ("Kátia", "Otávio") ou uma empresa com nome de pessoa são casos difíceis, e o modelo segue os padrões que viu no treino.
+- **Catastrophic forgetting.** O adaptador piora o modelo em tarefas gerais (ver [Frontend](#6-frontend)). Isso é aceitável para um modelo especialista; para manter as duas capacidades, seria preciso misturar no treino exemplos de instruções gerais.
+- **Omissões.** O modelo às vezes apaga palavras perto dos dados (`54 anos`, `recepção`). A métrica de similaridade capta isso parcialmente.
+- **Tamanho do modelo.** O 0.6B foi escolhido pela restrição de hardware. Um modelo de 1.7B–4B, treinado com QLoRA no Colab (`notebooks/treino_colab.ipynb`), tende a generalizar melhor.
+- **Escopo.** Apenas uma seed por configuração; não medimos a variância entre execuções.
+
+## Referências
+
+- Hu, E. et al. (2021). *LoRA: Low-Rank Adaptation of Large Language Models*. arXiv:2106.09685.
+- Qwen Team (2025). *Qwen3 Technical Report*. Modelo: [Qwen/Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B) (Apache 2.0).
+- Brasil. *Lei nº 13.709/2018 — Lei Geral de Proteção de Dados Pessoais (LGPD)*, art. 5º, I: definição de dado pessoal.
+- Hugging Face: [Transformers](https://huggingface.co/docs/transformers) e [PEFT](https://huggingface.co/docs/peft).
+- PyTorch: [instalação com CUDA](https://pytorch.org/get-started/locally/).
+- [Gradio](https://www.gradio.app/).

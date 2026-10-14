@@ -1,0 +1,35 @@
+{
+  "config": {
+    "model": "Qwen/Qwen3-0.6B",
+    "data": "C:\\Users\\POV\\Desktop\\cp-llm-lgpd\\data",
+    "out": "C:\\Users\\POV\\Desktop\\cp-llm-lgpd\\outputs\\exp2_r16_lr2e-4_ep2",
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "lr": 0.0002,
+    "epochs": 2.0,
+    "batch": 4,
+    "grad_accum": 4,
+    "max_len": 384,
+    "train_limit": null,
+    "val_limit": 150,
+    "eval_steps": 25,
+    "grad_checkpointing": true,
+    "seed": 42
+  },
+  "gpu": {
+    "gpu": "NVIDIA GeForce GTX 1060 6GB",
+    "compute_capability": "6.1",
+    "vram_gb": 6.0,
+    "torch": "2.14.1+cu126",
+    "cuda": "12.6",
+    "precisao": "fp32"
+  },
+  "precisao_treino": "fp32",
+  "parametros_treinaveis": 10092544,
+  "parametros_totais": 606142464,
+  "tempo_treino_s": 2187.4,
+  "train_loss": 0.0133,
+  "eval_loss": 0.0001,
+  "pico_vram_gb": 4.31
+}

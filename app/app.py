@@ -130,8 +130,8 @@ def main():
                     modo, temperatura, max_tokens = controles(0)
                     botao = gr.Button("Anonimizar", variant="primary")
             with gr.Row():
-                saida_ajust = gr.HighlightedText(label="Modelo ajustado (LoRA)", color_map=CORES)
-                saida_base = gr.HighlightedText(label="Modelo base", color_map=CORES)
+                saida_ajust = gr.HighlightedText(label="Modelo ajustado (LoRA)", color_map=CORES, show_inline_category=False)
+                saida_base = gr.HighlightedText(label="Modelo base", color_map=CORES, show_inline_category=False)
             info = gr.Markdown()
             botao.click(processar, [entrada, modo, temperatura, max_tokens], [saida_ajust, saida_base, info])
             entrada.submit(processar, [entrada, modo, temperatura, max_tokens], [saida_ajust, saida_base, info])
