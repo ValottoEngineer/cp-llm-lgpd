@@ -169,7 +169,10 @@ Extensões utilizadas: **GPU Monitor** (`Maimonator.gpu-monitor`) e **GPU Enviro
 
 ![GPU no VSCode](docs/gpu_vscode.png)
 
-_(print do VSCode com o terminal rodando `python scripts/gpu_check.py` e/ou `python app/app.py`, com o monitor de GPU mostrando o uso)_
+Print tirado **durante o treino** (14/10/2026, 11h47): o terminal do VSCode roda `scripts/gpu_check.py`
+(PyTorch com `sm_61`, matmul fp32 a 3,16 TFLOPS), o `nvidia-smi` mostra a GTX 1060 com 81% de uso e 5,9 GB
+de VRAM ocupados pelo treino, e a extensão **GPU Monitor**, na barra de status, indica
+`NVIDIA GeForce GTX 1060 6GB: 5928 MiB / 6144 MiB, 82°C`.
 
 ## Estrutura
 
