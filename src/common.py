@@ -98,6 +98,26 @@ def anonimizar(model, tok, textos, max_new_tokens=256, temperature=0.0, top_p=0.
     return saidas, n_tokens
 
 
+def gerar_livre(model, tok, prompt, system=None, max_new_tokens=256, temperature=0.7, top_p=0.9):
+    """Gera uma resposta para um prompt qualquer do usuário (aba "Prompt livre" do frontend)."""
+    import torch
+
+    msgs = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": prompt}]
+    texto = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True, enable_thinking=False)
+    enc = tok(texto, return_tensors="pt", add_special_tokens=False).to(model.device)
+    kwargs = dict(max_new_tokens=max_new_tokens, pad_token_id=tok.pad_token_id,
+                  eos_token_id=tok.convert_tokens_to_ids(FIM_RESPOSTA))
+    if temperature > 0:
+        kwargs.update(do_sample=True, temperature=temperature, top_p=top_p)
+    else:
+        kwargs.update(do_sample=False, temperature=None, top_p=None, top_k=None)
+    with torch.inference_mode():
+        out = model.generate(**enc, **kwargs)
+    novos = out[0, enc["input_ids"].shape[1]:]
+    resposta = tok.decode(novos, skip_special_tokens=True)
+    return re.sub(r"<think>.*?</think>", "", resposta, flags=re.S).strip(), len(novos)
+
+
 def salvar_json(path, obj):
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:

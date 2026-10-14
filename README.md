@@ -149,12 +149,20 @@ python src/train.py --out outputs/local_r16 --r 16 --alpha 32 --batch 4 --grad-a
 
 ## 6. Frontend
 
-Interface em **Gradio** (`app/app.py`):
+Interface em **Gradio** (`app/app.py`), com duas abas:
 
+**Anonimizar texto**
 - campo para o usuário digitar ou colar o texto, com exemplos prontos;
-- escolha entre **modelo ajustado**, **modelo base** ou **comparar os dois lado a lado**;
+- dados anonimizados destacados por cor e tipo.
+
+**Prompt livre**
+- o usuário escreve **qualquer prompt** e, se quiser, uma instrução de sistema;
+- a resposta do modelo aparece na tela;
+- serve também para mostrar que o modelo continua respondendo outras tarefas depois do fine-tuning.
+
+**Nas duas abas**
+- escolha entre **modelo ajustado**, **modelo base** ou **comparar os dois lado a lado**. O mesmo modelo fica na memória e o adaptador LoRA é ligado ou desligado;
 - controle de **temperatura** e de **máximo de tokens**;
-- dados anonimizados destacados por cor e tipo;
 - tempo de resposta, tokens/s e VRAM em uso.
 
 ```bash
