@@ -3,10 +3,14 @@
 CP2/CP3 — 4ESPV-2026
 
 **Integrantes:**
-- Nome — RM
-- Nome — RM
-- Nome — RM
-- Nome — RM
+
+| Nome | RM |
+|---|---|
+| Enzo Vazquez Sartorelli | RM94618 |
+| Guilherme Brazioli | RM98237 |
+| Kaue Pastori Teixeira | RM98501 |
+| Nicolas Nogueira Boni | RM551965 |
+| Pedro Oliveira Valotto | RM551445 |
 
 Fine-tuning de uma LLM pequena para **detectar e anonimizar dados pessoais** em textos em português,
 trocando-os por marcadores, com frontend para o usuário testar.
@@ -161,7 +165,7 @@ Abre em http://127.0.0.1:7860.
 
 ## 7. GPU funcionando no VSCode
 
-Extensões utilizadas: **GPU Environment** e **GPU Monitor**.
+Extensões utilizadas: **GPU Monitor** (`Maimonator.gpu-monitor`) e **GPU Environments** (`run-ai.vscode-genv`), recomendadas em `.vscode/extensions.json`.
 
 ![GPU no VSCode](docs/gpu_vscode.png)
 

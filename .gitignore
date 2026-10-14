@@ -11,4 +11,4 @@ outputs/melhor/*
 results/*_previsoes.jsonl
 resultados_colab.zip
 .gradio/
-results/experimentos.log
+results/experimentos*.log
