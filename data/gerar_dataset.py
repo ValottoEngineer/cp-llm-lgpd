@@ -110,6 +110,38 @@ TEMPLATES = [
     "Para emissão do certificado precisamos do nome completo e CPF: {NOME}, {CPF}.",
 ]
 
+# Templates da versão 2 (--v2), criados a partir dos erros vistos no desafio: CNPJ e empresas
+# (NÃO são dados pessoais), nome isolado no início, títulos (Dr., Sr.), idade e listas sem rótulo.
+TEMPLATES_V2 = [
+    "{PRIMEIRO} aqui, do financeiro. O {NOME} pediu reembolso de {VALOR}.",
+    "{PRIMEIRO} falando. Pode me ligar no {TELEFONE}?",
+    "Sou a {PRIMEIRO}, gerente da {EMPRESA}, CNPJ {CNPJ}. Meu contato direto é {EMAIL}.",
+    "A nota deve sair em nome da {EMPRESA}, CNPJ {CNPJ}, e ser enviada para {EMAIL}.",
+    "Fornecedor: {EMPRESA} (CNPJ {CNPJ}). Responsável: {NOME}, telefone {TELEFONE}.",
+    "Prezado Dr. {NOME}, sua consulta foi confirmada para {DATA} às {HORA}.",
+    "Falar com o Sr. {PRIMEIRO} na portaria, ramal 214.",
+    "A Dra. {NOME} solicitou o prontuário do paciente {NOME_2}, {IDADE}, leito {LEITO}.",
+    "Paciente {NOME}, {IDADE}, CPF {CPF}, encaminhado para a cardiologia.",
+    "Dados: {NOME}, {CPF}, {CEP}.",
+    "{NOME}; {TELEFONE}; {EMAIL}; {CIDADE}",
+    "Cadastro rápido -> {NOME} / {CPF} / {ENDERECO} / {CEP}",
+    "O rastreio {RASTREIO} do pedido {PEDIDO} não atualiza desde {DATA}. Sou {NOME}.",
+    "Transferir {VALOR} da conta de {NOME} para {NOME_2}, chave Pix {EMAIL}.",
+    "Oi {PRIMEIRO}! Seu pedido {PEDIDO} chega hoje no CEP {CEP}.",
+    "Entregar na {ENDERECO}, recepção, aos cuidados do Sr. {PRIMEIRO}, {TELEFONE}.",
+    "Vizinho da {ENDERECO} aqui, reclamando do barulho de novo. Sou o {PRIMEIRO}, do 3º andar.",
+    "Contrato entre {EMPRESA}, CNPJ {CNPJ}, e {NOME}, CPF {CPF}.",
+]
+TEMPLATES_SEM_PII_V2 = [
+    "A empresa {EMPRESA}, CNPJ {CNPJ}, foi cadastrada como fornecedora.",
+    "O código de rastreio {RASTREIO} foi postado em {DATA}.",
+    "Produto SKU {SKU} sem estoque em {CIDADE}.",
+    "Emitir nota fiscal para {EMPRESA}, CNPJ {CNPJ}, no valor de {VALOR}.",
+]
+EMPRESAS = ["Ramos & Filhos Ltda", "Padaria Pão Dourado", "TechNova Sistemas S.A.", "Mercado Bom Preço",
+            "Construtora Alicerce Ltda", "Farmácia Vida", "Auto Peças Silva ME", "Clínica Bem Estar",
+            "Distribuidora Andrade", "Escola Pequeno Saber"]
+
 # Exemplos sem nenhum dado pessoal: o modelo deve devolver o texto inalterado.
 TEMPLATES_SEM_PII = [
     "Gostaria de saber o prazo de entrega para {CIDADE}.",
@@ -211,6 +243,21 @@ def gerar_distrator(tipo, rng):
         return rng.choice([c, f"{c}/{uf}", f"{c} - {uf}"])
     if tipo == "PRODUTO":
         return rng.choice(PRODUTOS)
+    if tipo == "EMPRESA":
+        return rng.choice(EMPRESAS)
+    if tipo == "CNPJ":
+        d = [rng.randint(0, 9) for _ in range(8)] + [0, 0, 0, 1] + [rng.randint(0, 9) for _ in range(2)]
+        s = "".join(map(str, d))
+        return f"{s[:2]}.{s[2:5]}.{s[5:8]}/{s[8:12]}-{s[12:]}"
+    if tipo == "RASTREIO":
+        letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        return rng.choice(letras) + rng.choice(letras) + str(rng.randint(10**8, 10**9 - 1)) + "BR"
+    if tipo == "IDADE":
+        return f"{rng.randint(18, 90)} anos"
+    if tipo == "LEITO":
+        return f"{rng.randint(1, 30)}{rng.choice('ABCD')}"
+    if tipo == "SKU":
+        return f"{rng.randint(100, 999)}-{rng.choice(['AZ', 'BX', 'KT', 'PR'])}-{rng.randint(10, 99)}"
     raise ValueError(tipo)
 
 
@@ -231,6 +278,9 @@ def preencher(template, rng, informal=False):
             if tipo == "NOME":
                 v = gerar_nome(rng)
                 nome_principal = nome_principal or v
+            elif tipo == "PRIMEIRO":  # só o primeiro nome (ex.: "Kátia aqui, do RH")
+                v = rng.choice(PRIMEIROS_NOMES)
+                nome_principal = nome_principal or v
             elif tipo == "CPF":
                 v = gerar_cpf(rng)
             elif tipo == "RG":
@@ -245,15 +295,16 @@ def preencher(template, rng, informal=False):
                 v = gerar_cep(rng)
             else:
                 v = gerar_distrator(tipo, rng)
-            if informal and tipo == "NOME" and rng.random() < 0.5:
+            if informal and tipo in ("NOME", "PRIMEIRO") and rng.random() < 0.5:
                 v = v.lower()
             valores[chave] = v
 
         v = valores[chave]
         entrada.append(v)
-        if tipo in PII:
-            saida.append(f"[{tipo}]")
-            entidades.append({"tipo": tipo, "valor": v})
+        tipo_pii = "NOME" if tipo == "PRIMEIRO" else tipo
+        if tipo_pii in PII:
+            saida.append(f"[{tipo_pii}]")
+            entidades.append({"tipo": tipo_pii, "valor": v})
         else:
             saida.append(v)
         pos = m.end()
@@ -264,12 +315,15 @@ def preencher(template, rng, informal=False):
     return "".join(entrada), "".join(saida), entidades
 
 
+SEM_PII = list(TEMPLATES_SEM_PII)
+
+
 def gerar_exemplos(n, templates_pii, rng, visto, frac_sem_pii=0.08):
     exemplos = []
     for _ in range(n):
         if rng.random() < frac_sem_pii:
-            idx = rng.randrange(len(TEMPLATES_SEM_PII))
-            t, tid = TEMPLATES_SEM_PII[idx], f"sem_pii_{idx}"
+            idx = rng.randrange(len(SEM_PII))
+            t, tid = SEM_PII[idx], f"sem_pii_{idx}"
         else:
             tid, t = rng.choice(templates_pii)
         inp, out, ents = preencher(t, rng, informal=rng.random() < 0.12)
@@ -292,13 +346,19 @@ def main():
     ap.add_argument("--holdout", type=int, default=8,
                     help="templates reservados só para o teste (medem generalização)")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--v2", action="store_true",
+                    help="inclui os templates da versão 2 (CNPJ/empresas, nome isolado, títulos, listas)")
     ap.add_argument("--out", default=str(Path(__file__).parent))
     args = ap.parse_args()
 
     rng = random.Random(args.seed)
+    if args.v2:
+        SEM_PII.extend(TEMPLATES_SEM_PII_V2)
     indexados = [(f"t{i}", t) for i, t in enumerate(TEMPLATES)]
     rng.shuffle(indexados)
     ineditos, vistos = indexados[:args.holdout], indexados[args.holdout:]
+    if args.v2:  # os templates v2 entram sempre no treino
+        vistos += [(f"v2_{i}", t) for i, t in enumerate(TEMPLATES_V2)]
 
     train = gerar_exemplos(args.n_train, vistos, random.Random(args.seed + 1), True)
     val = gerar_exemplos(args.n_val, vistos, random.Random(args.seed + 2), True)

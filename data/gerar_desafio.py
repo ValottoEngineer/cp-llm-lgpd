@@ -48,27 +48,62 @@ CASOS = [
     "Olá, {NOME:Gabriel}! Seu pedido 552-0091 saiu para entrega e chega hoje entre 14h e 18h no CEP {CEP:88015-200}.",
 ]
 
+# Desafio 2: escrito DEPOIS de analisar os erros do desafio 1 e ANTES de treinar o exp6 (dataset v2).
+# Frases novas (não copiadas dos templates v2) para medir se a melhoria generaliza.
+CASOS_2 = [
+    "Aqui é a {NOME:Rosângela}, da contabilidade. O boleto da Metalúrgica Forte Ltda (CNPJ 33.104.556/0001-08) venceu ontem.",
+    "Sr. {NOME:Valdir Campos}, 67 anos, aposentado, mora na {ENDERECO:Rua Vergueiro, 2045, casa 3} e pediu visita técnica.",
+    "por favor encaminhar para a Dra. {NOME:Simone Arantes} o exame do paciente {NOME:Wesley Rocha}, quarto 12.",
+    "{NOME:Marcelo}, {TELEFONE:31 99102-7788}, {EMAIL:marcelo.ti@gmail.com}",
+    "Razão social: Supermercado Estrela do Norte. CNPJ: 08.552.761/0001-44. Endereço comercial: Av. Recife, 900.",
+    "Oi {NOME:Júlia}, tudo bem? O seu código de rastreamento é NX448201937BR e a previsão é sexta.",
+    "Inscrita: {NOME:Helena Macedo Brandão} | CPF {CPF:604.128.339-17} | nascida em 1998 | turma 3B",
+    "A {NOME:Priscila} ligou do {TELEFONE:(81) 3462-1100} pedindo para falar com o Sr. {NOME:Antônio}.",
+    "Mandar a proposta para a Construtora Horizonte S.A. aos cuidados de {NOME:Eduardo Lins} ({EMAIL:eduardo.lins@horizonte.com.br}).",
+    "Ficha: {NOME:Benedito Alves} ; {RG:22.874.119-3} ; {CEP:13045-220} ; Campinas",
+    "O cliente do pedido 99120 informou que o SKU 450-PR-77 veio errado. Prazo de troca: 7 dias.",
+    "Bom dia, sou o {NOME:Rafael}, síndico do prédio da {ENDERECO:Alameda Santos, 455}. A reunião é dia 20.",
+    "Favor cadastrar a chave Pix {CPF:41207733860} em nome de {NOME:Lorena Duarte}.",
+    "Atendimento encerrado. Nota do cliente: 9. Protocolo 5531209987.",
+    "Dr. {NOME:Paulo Henrique Sá}, CRM 54321-SP, atende às terças na Clínica Bem Viver.",
+    "Meu filho {NOME:Enzo Moura}, 9 anos, estuda no período da tarde. Qualquer coisa me chama: {TELEFONE:11 98090-1234}.",
+    "Entregue para Dona {NOME:Cida} na portaria do {ENDERECO:Condomínio Jardim das Rosas, bloco 4, apto 21}, {CEP:74230-010}.",
+    "A loja Calçados Passo Firme ME (CNPJ 27.961.430/0001-61) solicitou parceria.",
+    "{NOME:Tiago} e {NOME:Fernanda Ribeiro} confirmaram presença. O evento é no Espaço Villa, às 19h.",
+    "Atualizar e-mail de {EMAIL:ana_c.souza@yahoo.com.br} para {EMAIL:anacsouza.trabalho@outlook.com}.",
+    "Prezada Sra. {NOME:Marta Goulart}, seu RG {RG:9.887.341-2} foi recebido com sucesso.",
+    "Reembolso aprovado: R$ 312,40 para {NOME:Diego Paiva}, CPF {CPF:735.902.114-88}, via TED.",
+    "Cupom BLACKFRIDAY30 aplicado no pedido 300-781. Frete grátis para todo o Brasil.",
+    "Mensagem da {NOME:Carol}: chego às 8h, deixa a chave com o porteiro da {ENDERECO:Rua Itapeva, 120}.",
+    "Testemunha: {NOME:Gilberto Nascimento}, 45 anos, morador da {ENDERECO:Travessa do Ouvidor, 33}, {CEP:20040-030}, Rio de Janeiro/RJ.",
+]
+
 MARC_RE = re.compile(r"\{([A-Z]+):([^}]*)\}")
 
 
-def main():
+def salvar(casos, nome):
     exemplos = []
-    for caso in CASOS:
+    for caso in casos:
         entidades = [{"tipo": t, "valor": v} for t, v in MARC_RE.findall(caso)]
         exemplos.append({
             "input": MARC_RE.sub(lambda m: m.group(2), caso),
             "output": MARC_RE.sub(lambda m: f"[{m.group(1)}]", caso),
             "entidades": entidades,
-            "template": "desafio",
+            "template": nome,
             "visto": False,
         })
-    out = Path(__file__).parent / "desafio.jsonl"
+    out = Path(__file__).parent / f"{nome}.jsonl"
     with open(out, "w", encoding="utf-8") as f:
         for e in exemplos:
             f.write(json.dumps(e, ensure_ascii=False) + "\n")
     n_ent = sum(len(e["entidades"]) for e in exemplos)
     sem = sum(not e["entidades"] for e in exemplos)
-    print(f"{len(exemplos)} casos, {n_ent} entidades, {sem} sem dados pessoais -> {out}")
+    print(f"{nome}: {len(exemplos)} casos, {n_ent} entidades, {sem} sem dados pessoais -> {out}")
+
+
+def main():
+    salvar(CASOS, "desafio")
+    salvar(CASOS_2, "desafio2")
 
 
 if __name__ == "__main__":
