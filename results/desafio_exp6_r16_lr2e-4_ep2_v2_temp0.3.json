@@ -1,0 +1,202 @@
+{
+  "nome": "desafio_exp6_r16_lr2e-4_ep2_v2_temp0.3",
+  "modelo": "Qwen/Qwen3-0.6B",
+  "adapter": "C:\\Users\\POV\\Desktop\\cp-llm-lgpd\\outputs\\exp6_r16_lr2e-4_ep2_v2",
+  "temperature": 0.3,
+  "top_p": 0.9,
+  "gpu": {
+    "gpu": "NVIDIA GeForce GTX 1060 6GB",
+    "compute_capability": "6.1",
+    "vram_gb": 6.0,
+    "torch": "2.14.1+cu126",
+    "cuda": "12.6",
+    "precisao": "fp32"
+  },
+  "tempo_s": 14.7,
+  "tokens_por_s": 74.6,
+  "metricas": {
+    "geral": {
+      "precision": 1.0,
+      "recall": 0.9474,
+      "f1": 0.973,
+      "vazamento_pct": 3.51,
+      "exato_pct": 80.0,
+      "similaridade": 0.9849,
+      "n": 30,
+      "por_tipo": {
+        "NOME": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 24
+        },
+        "CPF": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 6
+        },
+        "RG": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.8571,
+          "suporte": 4
+        },
+        "TELEFONE": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 7
+        },
+        "EMAIL": {
+          "precision": 1.0,
+          "recall": 0.8571,
+          "f1": 0.9231,
+          "suporte": 7
+        },
+        "ENDERECO": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 5
+        },
+        "CEP": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.8571,
+          "suporte": 4
+        }
+      }
+    },
+    "templates_ineditos": {
+      "precision": 1.0,
+      "recall": 0.9474,
+      "f1": 0.973,
+      "vazamento_pct": 3.51,
+      "exato_pct": 80.0,
+      "similaridade": 0.9849,
+      "n": 30,
+      "por_tipo": {
+        "NOME": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 24
+        },
+        "CPF": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 6
+        },
+        "RG": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.8571,
+          "suporte": 4
+        },
+        "TELEFONE": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 7
+        },
+        "EMAIL": {
+          "precision": 1.0,
+          "recall": 0.8571,
+          "f1": 0.9231,
+          "suporte": 7
+        },
+        "ENDERECO": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 5
+        },
+        "CEP": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.8571,
+          "suporte": 4
+        }
+      }
+    }
+  },
+  "amostras": [
+    {
+      "input": "Boa noite. Meu nome é Letícia Andrade Prado e estou tentando falar com vocês há três dias. Já liguei do meu celular (21) 99731-0042 e ninguém atende. O pedido é o 4471-88 e o rastreio QB928374651BR não atualiza.",
+      "esperado": "Boa noite. Meu nome é [NOME] e estou tentando falar com vocês há três dias. Já liguei do meu celular [TELEFONE] e ninguém atende. O pedido é o 4471-88 e o rastreio QB928374651BR não atualiza.",
+      "previsto": "Boa noite. Meu nome é [NOME] e estou tentando falar com vocês há três dias. Já liguei do meu celular [TELEFONE] e ninguém atende. O pedido é o 4471-88 e o rastreio QB928374651BR não atualiza."
+    },
+    {
+      "input": "cpf: 398 114 027 61 nome: Rodrigo Tavares — quero o reembolso do ingresso de R$ 189,90",
+      "esperado": "cpf: [CPF] nome: [NOME] — quero o reembolso do ingresso de R$ 189,90",
+      "previsto": "cpf: [CPF] nome: [NOME] — quero o reembolso do ingresso de R$ 189,90"
+    },
+    {
+      "input": "Pode mandar a nota pro email financeiro.ramos@outlook.com? A empresa é Ramos & Filhos Ltda, CNPJ 12.345.678/0001-95.",
+      "esperado": "Pode mandar a nota pro email [EMAIL]? A empresa é Ramos & Filhos Ltda, CNPJ 12.345.678/0001-95.",
+      "previsto": "Pode mandar a nota pro email financeiro.[EMAIL]? A empresa é Ramos & Filhos Ltda, CNPJ 12.345.678/0001-95."
+    },
+    {
+      "input": "Oi, sou a Bia, mãe do Davi Monteiro. Ele esqueceu a mochila na sala 12. Meu zap é 11 9 8222-1034.",
+      "esperado": "Oi, sou a [NOME], mãe do [NOME]. Ele esqueceu a mochila na sala 12. Meu zap é [TELEFONE].",
+      "previsto": "Oi, sou a [NOME], mãe do [NOME]. Ele esqueceu a mochila na sala 12. Meu zap é [TELEFONE]."
+    },
+    {
+      "input": "Prezados,\n\nInformo que me mudei. Novo endereço: Rua Professor Artur Ramos, 77, apto 904, Belo Horizonte, CEP 30140-120. Favor atualizar o cadastro do plano Premium 2026.\n\nAtt,\nCláudio Menezes",
+      "esperado": "Prezados,\n\nInformo que me mudei. Novo endereço: [ENDERECO], Belo Horizonte, CEP [CEP]. Favor atualizar o cadastro do plano Premium 2026.\n\nAtt,\n[NOME]",
+      "previsto": "Prezados,\n\nInformo que me mudei. Novo endereço: [ENDERECO], Belo Horizonte, CEP [CEP]. Favor atualizar o cadastro do plano Premium 2026.\n\nAtt,\n[NOME]"
+    },
+    {
+      "input": "o numero do meu rg é MG-14.552.903 e do cpf 07152966408, preciso da segunda via",
+      "esperado": "o numero do meu rg é [RG] e do cpf [CPF], preciso da segunda via",
+      "previsto": "o numero do meu rg é MG-14.552.903 e do cpf [CPF], preciso da segunda via"
+    },
+    {
+      "input": "Chamado 2026-000981 aberto por Thaís Correia (thais.correia@empresa.com.br) às 09:12 sobre falha no VPN.",
+      "esperado": "Chamado 2026-000981 aberto por [NOME] ([EMAIL]) às 09:12 sobre falha no VPN.",
+      "previsto": "Chamado 2026-000981 aberto por [NOME] ([EMAIL]) às 09:12 sobre falha no VPN."
+    },
+    {
+      "input": "Transferir R$ 2.500,00 da conta de Osvaldo Pires para Marina Pires, chave Pix marina.pires@gmail.com.",
+      "esperado": "Transferir R$ 2.500,00 da conta de [NOME] para [NOME], chave Pix [EMAIL].",
+      "previsto": "Transferir R$ 2.500,00 da conta de [NOME] para [NOME], chave Pix [EMAIL]."
+    },
+    {
+      "input": "Entregar na Av. Brigadeiro Faria Lima, 3477, 14º andar, recepção, até 18h. Contato no local: Sr. Hélio +55 (11) 3048-7700.",
+      "esperado": "Entregar na [ENDERECO], recepção, até 18h. Contato no local: Sr. [NOME] [TELEFONE].",
+      "previsto": "Entregar na [ENDERECO], recepção, até 18h. Contato no local: Sr. [NOME] +55 [TELEFONE]."
+    },
+    {
+      "input": "Meu email é joao.batista1987 arroba hotmail.com pq o anterior foi hackeado",
+      "esperado": "Meu email é [EMAIL] pq o anterior foi hackeado",
+      "previsto": "Meu email é [EMAIL] pq o anterior foi hackeado."
+    },
+    {
+      "input": "Encaminho o laudo da paciente Fernanda de Souza Lima, 54 anos, CPF 226.407.538-02, internada no leito 7B.",
+      "esperado": "Encaminho o laudo da paciente [NOME], 54 anos, CPF [CPF], internada no leito 7B.",
+      "previsto": "Encaminho o laudo da paciente [NOME], 54 anos, CPF [CPF], internada no leito 7B."
+    },
+    {
+      "input": "A reunião de alinhamento com a equipe de São Paulo foi remarcada para quinta às 15h. Pauta: metas do Q4 e orçamento de R$ 40 mil.",
+      "esperado": "A reunião de alinhamento com a equipe de São Paulo foi remarcada para quinta às 15h. Pauta: metas do Q4 e orçamento de R$ 40 mil.",
+      "previsto": "A reunião de alinhamento com a equipe de São Paulo foi remarcada para quinta às 15h. Pauta: metas do Q4 e orçamento de R$ 40 mil."
+    },
+    {
+      "input": "Olá! Recebi a cobrança 88213 duas vezes no cartão final 4421. Podem estornar?",
+      "esperado": "Olá! Recebi a cobrança 88213 duas vezes no cartão final 4421. Podem estornar?",
+      "previsto": "Olá! Recebi a cobrança 88213 duas vezes no cartão final 4421. Podem estornar?"
+    },
+    {
+      "input": "Testemunhas: 1) Ana Paula Ferreira, RG 28.391.004-7; 2) Jorge Luiz Mendes, RG 31.002.876-X.",
+      "esperado": "Testemunhas: 1) [NOME], RG [RG]; 2) [NOME], RG [RG].",
+      "previsto": "Testemunhas: 1) [NOME], RG [RG]; 2) [NOME], RG [RG]."
+    },
+    {
+      "input": "Kátia aqui, do RH. O Fábio Nunes pediu para alterar o telefone de emergência para (47) 98811-2093.",
+      "esperado": "[NOME] aqui, do RH. O [NOME] pediu para alterar o telefone de emergência para [TELEFONE].",
+      "previsto": "[NOME] aqui, do RH. O [NOME] pediu para alterar o telefone de emergência para [TELEFONE]."
+    }
+  ]
+}

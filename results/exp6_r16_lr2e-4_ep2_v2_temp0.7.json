@@ -1,0 +1,255 @@
+{
+  "nome": "exp6_r16_lr2e-4_ep2_v2_temp0.7",
+  "modelo": "Qwen/Qwen3-0.6B",
+  "adapter": "C:\\Users\\POV\\Desktop\\cp-llm-lgpd\\outputs\\exp6_r16_lr2e-4_ep2_v2",
+  "temperature": 0.7,
+  "top_p": 0.9,
+  "gpu": {
+    "gpu": "NVIDIA GeForce GTX 1060 6GB",
+    "compute_capability": "6.1",
+    "vram_gb": 6.0,
+    "torch": "2.14.1+cu126",
+    "cuda": "12.6",
+    "precisao": "fp32"
+  },
+  "tempo_s": 139.8,
+  "tokens_por_s": 90.4,
+  "metricas": {
+    "geral": {
+      "precision": 1.0,
+      "recall": 0.9935,
+      "f1": 0.9968,
+      "vazamento_pct": 0.0,
+      "exato_pct": 98.5,
+      "similaridade": 0.999,
+      "n": 400,
+      "por_tipo": {
+        "NOME": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 397
+        },
+        "CPF": {
+          "precision": 1.0,
+          "recall": 0.9535,
+          "f1": 0.9762,
+          "suporte": 129
+        },
+        "RG": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 49
+        },
+        "TELEFONE": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 157
+        },
+        "EMAIL": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 89
+        },
+        "ENDERECO": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 51
+        },
+        "CEP": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 56
+        }
+      }
+    },
+    "templates_vistos": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "vazamento_pct": 0.0,
+      "exato_pct": 100.0,
+      "similaridade": 1.0,
+      "n": 200,
+      "por_tipo": {
+        "NOME": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 172
+        },
+        "CPF": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 65
+        },
+        "RG": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 28
+        },
+        "TELEFONE": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 63
+        },
+        "EMAIL": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 47
+        },
+        "ENDERECO": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 51
+        },
+        "CEP": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 32
+        }
+      }
+    },
+    "templates_ineditos": {
+      "precision": 1.0,
+      "recall": 0.9872,
+      "f1": 0.9936,
+      "vazamento_pct": 0.0,
+      "exato_pct": 97.0,
+      "similaridade": 0.9979,
+      "n": 200,
+      "por_tipo": {
+        "NOME": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 225
+        },
+        "CPF": {
+          "precision": 1.0,
+          "recall": 0.9062,
+          "f1": 0.9508,
+          "suporte": 64
+        },
+        "RG": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 21
+        },
+        "TELEFONE": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 94
+        },
+        "EMAIL": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 42
+        },
+        "ENDERECO": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 0
+        },
+        "CEP": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "suporte": 24
+        }
+      }
+    }
+  },
+  "amostras": [
+    {
+      "input": "Atualização cadastral: novo telefone 71 99288-4246, novo CEP 41906-853.",
+      "esperado": "Atualização cadastral: novo telefone [TELEFONE], novo CEP [CEP].",
+      "previsto": "Atualização cadastral: novo telefone [TELEFONE], novo CEP [CEP]."
+    },
+    {
+      "input": "Seguem meus dados para o reembolso: Rafael Martins, CPF 91895922631, valor R$ 280,00.",
+      "esperado": "Seguem meus dados para o reembolso: [NOME], CPF [CPF], valor R$ 280,00.",
+      "previsto": "Seguem meus dados para o reembolso: [NOME], CPF [CPF], valor R$ 280,00."
+    },
+    {
+      "input": "Seguem meus dados para o reembolso: Lucas Pinto, CPF 622.164.281-75, valor R$ 6.892,43.",
+      "esperado": "Seguem meus dados para o reembolso: [NOME], CPF [CPF], valor R$ 6.892,43.",
+      "previsto": "Seguem meus dados para o reembolso: [NOME], CPF [CPF], valor R$ 6.892,43."
+    },
+    {
+      "input": "Assinado por Aline Pereira Freitas Souza - beatriz745@gmail.com - 91 3186-7801",
+      "esperado": "Assinado por [NOME] - [EMAIL] - [TELEFONE]",
+      "previsto": "Assinado por [NOME] - [EMAIL] - [TELEFONE]"
+    },
+    {
+      "input": "quero trocar o micro-ondas por outro modelo, é possível?",
+      "esperado": "quero trocar o micro-ondas por outro modelo, é possível?",
+      "previsto": "quero trocar o micro-ondas por outro modelo, é possível?"
+    },
+    {
+      "input": "Me chamo André Rocha Gomes Monteiro, moro na Rua Independência, 326 e quero saber se vocês entregam no CEP 98775-993.",
+      "esperado": "Me chamo [NOME], moro na [ENDERECO] e quero saber se vocês entregam no CEP [CEP].",
+      "previsto": "Me chamo [NOME], moro na [ENDERECO] e quero saber se vocês entregam no CEP [CEP]."
+    },
+    {
+      "input": "oi, aqui é Fernanda Gonçalves Santos, me liga no (81) 96819-5088 quando puder",
+      "esperado": "oi, aqui é [NOME], me liga no [TELEFONE] quando puder",
+      "previsto": "oi, aqui é [NOME], me liga no [TELEFONE] quando puder"
+    },
+    {
+      "input": "Meu RG é 135559026 e meu CPF é 49201994494, estou mandando para completar o cadastro.",
+      "esperado": "Meu RG é [RG] e meu CPF é [CPF], estou mandando para completar o cadastro.",
+      "previsto": "Meu RG é [RG] e meu CPF é [CPF], estou mandando para completar o cadastro."
+    },
+    {
+      "input": "Protocolo 4165251844 encerrado às 08:15.",
+      "esperado": "Protocolo 4165251844 encerrado às 08:15.",
+      "previsto": "Protocolo 4165251844 encerrado às 08:15."
+    },
+    {
+      "input": "Ligação recebida do número (92) 92533-2515 às 13h30. Solicitante: Vanessa Cardoso Cavalcanti. Protocolo 2097057786.",
+      "esperado": "Ligação recebida do número [TELEFONE] às 13h30. Solicitante: [NOME]. Protocolo 2097057786.",
+      "previsto": "Ligação recebida do número [TELEFONE] às 13h30. Solicitante: [NOME]. Protocolo 2097057786."
+    },
+    {
+      "input": "Indicação: Mariana Souza Dias indicou Mariana Lopes Ferreira para o programa. Contato do indicado: (85) 4389-4210.",
+      "esperado": "Indicação: [NOME] indicou [NOME] para o programa. Contato do indicado: [TELEFONE].",
+      "previsto": "Indicação: [NOME] indicou [NOME] para o programa. Contato do indicado: [TELEFONE]."
+    },
+    {
+      "input": "Matrícula do aluno Matheus Soares Gonçalves, responsável Ana Dias, telefone do responsável 8548560154.",
+      "esperado": "Matrícula do aluno [NOME], responsável [NOME], telefone do responsável [TELEFONE].",
+      "previsto": "Matrícula do aluno [NOME], responsável [NOME], telefone do responsável [TELEFONE]."
+    },
+    {
+      "input": "Quero cancelar a assinatura. Titular Vinícius Santana, e-mail vsantana@bol.com.br, protocolo anterior 5030400469.",
+      "esperado": "Quero cancelar a assinatura. Titular [NOME], e-mail [EMAIL], protocolo anterior 5030400469.",
+      "previsto": "Quero cancelar a assinatura. Titular [NOME], e-mail [EMAIL], protocolo anterior 5030400469."
+    },
+    {
+      "input": "Indicação: André Pinto indicou Francisco Moreira Rocha para o programa. Contato do indicado: (85)918486712.",
+      "esperado": "Indicação: [NOME] indicou [NOME] para o programa. Contato do indicado: [TELEFONE].",
+      "previsto": "Indicação: [NOME] indicou [NOME] para o programa. Contato do indicado: [TELEFONE]."
+    },
+    {
+      "input": "Quero cancelar a assinatura. Titular Bruno Ferreira, e-mail bruno84@icloud.com, protocolo anterior 3855330844.",
+      "esperado": "Quero cancelar a assinatura. Titular [NOME], e-mail [EMAIL], protocolo anterior 3855330844.",
+      "previsto": "Quero cancelar a assinatura. Titular [NOME], e-mail [EMAIL], protocolo anterior 3855330844."
+    }
+  ]
+}

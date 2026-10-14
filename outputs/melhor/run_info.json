@@ -1,8 +1,8 @@
 {
   "config": {
     "model": "Qwen/Qwen3-0.6B",
-    "data": "C:\\Users\\POV\\Desktop\\cp-llm-lgpd\\data",
-    "out": "C:\\Users\\POV\\Desktop\\cp-llm-lgpd\\outputs\\exp2_r16_lr2e-4_ep2",
+    "data": "C:\\Users\\POV\\Desktop\\cp-llm-lgpd\\data\\v2",
+    "out": "C:\\Users\\POV\\Desktop\\cp-llm-lgpd\\outputs\\exp6_r16_lr2e-4_ep2_v2",
     "r": 16,
     "alpha": 32,
     "dropout": 0.05,
@@ -28,8 +28,8 @@
   "precisao_treino": "fp32",
   "parametros_treinaveis": 10092544,
   "parametros_totais": 606142464,
-  "tempo_treino_s": 2187.4,
-  "train_loss": 0.0133,
+  "tempo_treino_s": 1885.9,
+  "train_loss": 0.0164,
   "eval_loss": 0.0001,
-  "pico_vram_gb": 4.31
+  "pico_vram_gb": 4.28
 }

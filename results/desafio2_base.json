@@ -1,0 +1,202 @@
+{
+  "nome": "desafio2_base",
+  "modelo": "Qwen/Qwen3-0.6B",
+  "adapter": null,
+  "temperature": 0.0,
+  "top_p": 0.9,
+  "gpu": {
+    "gpu": "NVIDIA GeForce GTX 1060 6GB",
+    "compute_capability": "6.1",
+    "vram_gb": 6.0,
+    "torch": "2.14.1+cu126",
+    "cuda": "12.6",
+    "precisao": "fp32"
+  },
+  "tempo_s": 12.5,
+  "tokens_por_s": 73.2,
+  "metricas": {
+    "geral": {
+      "precision": 0.2432,
+      "recall": 0.8571,
+      "f1": 0.3789,
+      "vazamento_pct": 9.52,
+      "exato_pct": 0.0,
+      "similaridade": 0.4616,
+      "n": 25,
+      "por_tipo": {
+        "NOME": {
+          "precision": 0.72,
+          "recall": 0.8182,
+          "f1": 0.766,
+          "suporte": 22
+        },
+        "CPF": {
+          "precision": 0.1765,
+          "recall": 1.0,
+          "f1": 0.3,
+          "suporte": 3
+        },
+        "RG": {
+          "precision": 0.1053,
+          "recall": 1.0,
+          "f1": 0.1905,
+          "suporte": 2
+        },
+        "TELEFONE": {
+          "precision": 0.1304,
+          "recall": 1.0,
+          "f1": 0.2308,
+          "suporte": 3
+        },
+        "EMAIL": {
+          "precision": 0.1053,
+          "recall": 0.5,
+          "f1": 0.1739,
+          "suporte": 4
+        },
+        "ENDERECO": {
+          "precision": 0.2174,
+          "recall": 1.0,
+          "f1": 0.3571,
+          "suporte": 5
+        },
+        "CEP": {
+          "precision": 0.1364,
+          "recall": 1.0,
+          "f1": 0.24,
+          "suporte": 3
+        }
+      }
+    },
+    "templates_ineditos": {
+      "precision": 0.2432,
+      "recall": 0.8571,
+      "f1": 0.3789,
+      "vazamento_pct": 9.52,
+      "exato_pct": 0.0,
+      "similaridade": 0.4616,
+      "n": 25,
+      "por_tipo": {
+        "NOME": {
+          "precision": 0.72,
+          "recall": 0.8182,
+          "f1": 0.766,
+          "suporte": 22
+        },
+        "CPF": {
+          "precision": 0.1765,
+          "recall": 1.0,
+          "f1": 0.3,
+          "suporte": 3
+        },
+        "RG": {
+          "precision": 0.1053,
+          "recall": 1.0,
+          "f1": 0.1905,
+          "suporte": 2
+        },
+        "TELEFONE": {
+          "precision": 0.1304,
+          "recall": 1.0,
+          "f1": 0.2308,
+          "suporte": 3
+        },
+        "EMAIL": {
+          "precision": 0.1053,
+          "recall": 0.5,
+          "f1": 0.1739,
+          "suporte": 4
+        },
+        "ENDERECO": {
+          "precision": 0.2174,
+          "recall": 1.0,
+          "f1": 0.3571,
+          "suporte": 5
+        },
+        "CEP": {
+          "precision": 0.1364,
+          "recall": 1.0,
+          "f1": 0.24,
+          "suporte": 3
+        }
+      }
+    }
+  },
+  "amostras": [
+    {
+      "input": "Aqui é a Rosângela, da contabilidade. O boleto da Metalúrgica Forte Ltda (CNPJ 33.104.556/0001-08) venceu ontem.",
+      "esperado": "Aqui é a [NOME], da contabilidade. O boleto da Metalúrgica Forte Ltda (CNPJ 33.104.556/0001-08) venceu ontem.",
+      "previsto": "[NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]"
+    },
+    {
+      "input": "Sr. Valdir Campos, 67 anos, aposentado, mora na Rua Vergueiro, 2045, casa 3 e pediu visita técnica.",
+      "esperado": "Sr. [NOME], 67 anos, aposentado, mora na [ENDERECO] e pediu visita técnica.",
+      "previsto": "Sr. Valdir [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "por favor encaminhar para a Dra. Simone Arantes o exame do paciente Wesley Rocha, quarto 12.",
+      "esperado": "por favor encaminhar para a Dra. [NOME] o exame do paciente [NOME], quarto 12.",
+      "previsto": "[EXAME DO PACIENTE Wesley Rocha, QUARTO 12]"
+    },
+    {
+      "input": "Marcelo, 31 99102-7788, marcelo.ti@gmail.com",
+      "esperado": "[NOME], [TELEFONE], [EMAIL]",
+      "previsto": "[NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "Razão social: Supermercado Estrela do Norte. CNPJ: 08.552.761/0001-44. Endereço comercial: Av. Recife, 900.",
+      "esperado": "Razão social: Supermercado Estrela do Norte. CNPJ: 08.552.761/0001-44. Endereço comercial: Av. Recife, 900.",
+      "previsto": "Razão social: [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "Oi Júlia, tudo bem? O seu código de rastreamento é NX448201937BR e a previsão é sexta.",
+      "esperado": "Oi [NOME], tudo bem? O seu código de rastreamento é NX448201937BR e a previsão é sexta.",
+      "previsto": "Oi [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]. O seu código de rastreamento é [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]. O seu código de rastreamento é [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "Inscrita: Helena Macedo Brandão | CPF 604.128.339-17 | nascida em 1998 | turma 3B",
+      "esperado": "Inscrita: [NOME] | CPF [CPF] | nascida em 1998 | turma 3B",
+      "previsto": "Inscrita: [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    },
+    {
+      "input": "A Priscila ligou do (81) 3462-1100 pedindo para falar com o Sr. Antônio.",
+      "esperado": "A [NOME] ligou do [TELEFONE] pedindo para falar com o Sr. [NOME].",
+      "previsto": "[NOME] ligou do [TELEFONE] pedindo para falar com [RG] Sr. [ENDERECO] [CEP]."
+    },
+    {
+      "input": "Mandar a proposta para a Construtora Horizonte S.A. aos cuidados de Eduardo Lins (eduardo.lins@horizonte.com.br).",
+      "esperado": "Mandar a proposta para a Construtora Horizonte S.A. aos cuidados de [NOME] ([EMAIL]).",
+      "previsto": "[MANDAR A PROPOSTA PARA A CONSTRUTORA HORIZONTE S.A. AO CUIDADOS DE EDUARDO LINS (EDUARDO.LINS@HORIZONTE.COM.BR)]"
+    },
+    {
+      "input": "Ficha: Benedito Alves ; 22.874.119-3 ; 13045-220 ; Campinas",
+      "esperado": "Ficha: [NOME] ; [RG] ; [CEP] ; Campinas",
+      "previsto": "[Ficha: [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]]"
+    },
+    {
+      "input": "O cliente do pedido 99120 informou que o SKU 450-PR-77 veio errado. Prazo de troca: 7 dias.",
+      "esperado": "O cliente do pedido 99120 informou que o SKU 450-PR-77 veio errado. Prazo de troca: 7 dias.",
+      "previsto": "[NOME] informou que o SKU [450-PR-77] veio errado. Prazo de troca: [7 dias]."
+    },
+    {
+      "input": "Bom dia, sou o Rafael, síndico do prédio da Alameda Santos, 455. A reunião é dia 20.",
+      "esperado": "Bom dia, sou o [NOME], síndico do prédio da [ENDERECO]. A reunião é dia 20.",
+      "previsto": "Bom dia, [NOME], [RG], [TELEFONE], [ENDERECO], [CEP]. A reunião é dia 20."
+    },
+    {
+      "input": "Favor cadastrar a chave Pix 41207733860 em nome de Lorena Duarte.",
+      "esperado": "Favor cadastrar a chave Pix [CPF] em nome de [NOME].",
+      "previsto": "[NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]"
+    },
+    {
+      "input": "Atendimento encerrado. Nota do cliente: 9. Protocolo 5531209987.",
+      "esperado": "Atendimento encerrado. Nota do cliente: 9. Protocolo 5531209987.",
+      "previsto": "Atendimento encerrado. [NOME], nota do cliente: 9. Protocolo [5531209987]."
+    },
+    {
+      "input": "Dr. Paulo Henrique Sá, CRM 54321-SP, atende às terças na Clínica Bem Viver.",
+      "esperado": "Dr. [NOME], CRM 54321-SP, atende às terças na Clínica Bem Viver.",
+      "previsto": "[NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]."
+    }
+  ]
+}

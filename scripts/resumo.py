@@ -25,7 +25,7 @@ def tabela_avaliacao(resultados, com_ineditos):
     linhas = [cab, sep]
     for r in resultados:
         g = r["metricas"]["geral"]
-        nome = r["nome"].removeprefix("desafio_")
+        nome = r["nome"].removeprefix("desafio2_").removeprefix("desafio_")
         linha = (f"| {nome} | {r['temperature']} | {g['f1']} | {g['precision']} | {g['recall']} | "
                  f"{g['vazamento_pct']} | {g['exato_pct']} | {g['similaridade']} |")
         if com_ineditos:
@@ -45,8 +45,9 @@ def tabela_por_tipo(r):
 def main():
     todos = [carregar(p) for p in sorted(RES.glob("*.json"))]
     todos = [r for r in todos if "metricas" in r]
-    teste = [r for r in todos if not r["nome"].startswith("desafio_")]
+    teste = [r for r in todos if not r["nome"].startswith(("desafio_", "desafio2_"))]
     desafio = [r for r in todos if r["nome"].startswith("desafio_")]
+    desafio2 = [r for r in todos if r["nome"].startswith("desafio2_")]
     por_nome = {r["nome"]: r for r in todos}
 
     linhas = ["# Resumo dos experimentos", ""]
@@ -77,17 +78,24 @@ def main():
                    "Textos com redação livre, fora dos templates do treino (`data/gerar_desafio.py`).", ""]
         linhas += tabela_avaliacao(desafio, com_ineditos=False)
 
+    if desafio2:
+        n = desafio2[0]["metricas"]["geral"]["n"]
+        linhas += ["", f"## Avaliação — desafio 2, escrito antes do exp6 ({n} textos)", "",
+                   "Único conjunto independente de todos os treinos, inclusive do dataset v2.", ""]
+        linhas += tabela_avaliacao(desafio2, com_ineditos=False)
+
     melhor_txt = OUTS / "melhor" / "ORIGEM.txt"
     if melhor_txt.exists():
         melhor = melhor_txt.read_text(encoding="utf-8").strip()
         linhas += ["", f"## Melhor modelo: `{melhor}`", ""]
-        for titulo, nome in (("Teste sintético", melhor), ("Desafio", f"desafio_{melhor}")):
+        for titulo, nome in (("Teste sintético", melhor), ("Desafio", f"desafio_{melhor}"),
+                             ("Desafio 2", f"desafio2_{melhor}")):
             if nome in por_nome:
                 linhas += [f"**F1 por tipo de dado — {titulo}**", ""] + tabela_por_tipo(por_nome[nome]) + [""]
 
-        base, ajust = por_nome.get("desafio_base"), por_nome.get(f"desafio_{melhor}")
+        base, ajust = por_nome.get("desafio2_base"), por_nome.get(f"desafio2_{melhor}")
         if base and ajust:
-            linhas += ["## Exemplos do desafio: base × ajustado", ""]
+            linhas += ["## Exemplos do desafio 2: base × ajustado", ""]
             for a, b in list(zip(base["amostras"], ajust["amostras"]))[:6]:
                 linhas += [f"- **Entrada:** {a['input']}",
                            f"  - Base: {a['previsto']}",

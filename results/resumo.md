@@ -11,6 +11,7 @@ GPU: **NVIDIA GeForce GTX 1060 6GB** · PyTorch 2.14.1+cu126 · CUDA 12.6 · pre
 | exp3_r32_lr2e-4_ep2 | 32 | 64 | 0.0002 | 2.0 | 0.0112 | 0.0 | 35.0 | 4.46 |
 | exp4_r16_lr5e-5_ep2 | 16 | 32 | 5e-05 | 2.0 | 0.0228 | 0.0002 | 34.2 | 4.31 |
 | exp5_r16_lr2e-4_ep1 | 16 | 32 | 0.0002 | 1.0 | 0.0224 | 0.0003 | 20.3 | 4.29 |
+| exp6_r16_lr2e-4_ep2_v2 | 16 | 32 | 0.0002 | 2.0 | 0.0164 | 0.0001 | 31.4 | 4.28 |
 
 ## Avaliação — conjunto de teste sintético (400 exemplos)
 
@@ -25,8 +26,15 @@ Vazamento = % dos dados pessoais que continuam no texto (menor é melhor).
 | exp2_r16_lr2e-4_ep2_temp0.7 | 0.7 | 0.9995 | 1.0 | 0.9989 | 0.0 | 99.75 | 0.9998 | 0.9989 | 90.9 |
 | exp2_r16_lr2e-4_ep2_temp1.0 | 1.0 | 0.9995 | 1.0 | 0.9989 | 0.0 | 99.75 | 0.9998 | 0.9989 | 91.9 |
 | exp3_r32_lr2e-4_ep2 | 0.0 | 0.9995 | 1.0 | 0.9989 | 0.0 | 99.75 | 0.9998 | 0.9989 | 95.8 |
+| exp3_r32_lr2e-4_ep2_temp0.3 | 0.3 | 1.0 | 1.0 | 1.0 | 0.0 | 100.0 | 1.0 | 1.0 | 90.0 |
+| exp3_r32_lr2e-4_ep2_temp0.7 | 0.7 | 0.9984 | 0.9989 | 0.9978 | 0.0 | 99.5 | 0.9997 | 0.9968 | 90.1 |
+| exp3_r32_lr2e-4_ep2_temp1.0 | 1.0 | 0.9989 | 1.0 | 0.9978 | 0.0 | 99.5 | 0.9997 | 0.9979 | 90.2 |
 | exp4_r16_lr5e-5_ep2 | 0.0 | 0.9908 | 0.9989 | 0.9828 | 0.0 | 93.25 | 0.9964 | 0.9816 | 96.1 |
 | exp5_r16_lr2e-4_ep1 | 0.0 | 0.9995 | 1.0 | 0.9989 | 0.0 | 99.75 | 0.9998 | 0.9989 | 95.8 |
+| exp6_r16_lr2e-4_ep2_v2 | 0.0 | 0.9978 | 1.0 | 0.9957 | 0.0 | 99.0 | 0.9993 | 0.9957 | 95.2 |
+| exp6_r16_lr2e-4_ep2_v2_temp0.3 | 0.3 | 0.9989 | 1.0 | 0.9978 | 0.0 | 99.5 | 0.9997 | 0.9979 | 90.0 |
+| exp6_r16_lr2e-4_ep2_v2_temp0.7 | 0.7 | 0.9968 | 1.0 | 0.9935 | 0.0 | 98.5 | 0.999 | 0.9936 | 90.4 |
+| exp6_r16_lr2e-4_ep2_v2_temp1.0 | 1.0 | 0.9984 | 1.0 | 0.9968 | 0.0 | 99.25 | 0.9995 | 0.9968 | 90.8 |
 
 ## Avaliação — conjunto de desafio escrito à mão (30 textos)
 
@@ -41,17 +49,41 @@ Textos com redação livre, fora dos templates do treino (`data/gerar_desafio.py
 | exp2_r16_lr2e-4_ep2_temp0.7 | 0.7 | 0.9217 | 0.9138 | 0.9298 | 1.75 | 73.33 | 0.9602 | 69.9 |
 | exp2_r16_lr2e-4_ep2_temp1.0 | 1.0 | 0.931 | 0.9153 | 0.9474 | 1.75 | 73.33 | 0.965 | 70.9 |
 | exp3_r32_lr2e-4_ep2 | 0.0 | 0.9043 | 0.8966 | 0.9123 | 3.51 | 60.0 | 0.9699 | 80.9 |
+| exp3_r32_lr2e-4_ep2_temp0.3 | 0.3 | 0.9043 | 0.8966 | 0.9123 | 3.51 | 60.0 | 0.9699 | 74.8 |
+| exp3_r32_lr2e-4_ep2_temp0.7 | 0.7 | 0.9217 | 0.9138 | 0.9298 | 3.51 | 60.0 | 0.9719 | 74.5 |
+| exp3_r32_lr2e-4_ep2_temp1.0 | 1.0 | 0.9138 | 0.8983 | 0.9298 | 3.51 | 66.67 | 0.9707 | 75.0 |
 | exp4_r16_lr5e-5_ep2 | 0.0 | 0.9189 | 0.9444 | 0.8947 | 3.51 | 60.0 | 0.9531 | 74.7 |
 | exp5_r16_lr2e-4_ep1 | 0.0 | 0.9217 | 0.9138 | 0.9298 | 5.26 | 73.33 | 0.9665 | 78.5 |
+| exp6_r16_lr2e-4_ep2_v2 | 0.0 | 0.973 | 1.0 | 0.9474 | 3.51 | 83.33 | 0.9857 | 78.6 |
+| exp6_r16_lr2e-4_ep2_v2_temp0.3 | 0.3 | 0.973 | 1.0 | 0.9474 | 3.51 | 80.0 | 0.9849 | 74.6 |
+| exp6_r16_lr2e-4_ep2_v2_temp0.7 | 0.7 | 0.973 | 1.0 | 0.9474 | 3.51 | 86.67 | 0.986 | 74.2 |
+| exp6_r16_lr2e-4_ep2_v2_temp1.0 | 1.0 | 0.973 | 1.0 | 0.9474 | 3.51 | 83.33 | 0.9803 | 74.0 |
 
-## Melhor modelo: `exp2_r16_lr2e-4_ep2`
+## Avaliação — desafio 2, escrito antes do exp6 (25 textos)
+
+Único conjunto independente de todos os treinos, inclusive do dataset v2.
+
+| Modelo | temp. | F1 | Precision | Recall | Vazamento % | Exato % | Similaridade | tok/s |
+|---|---|---|---|---|---|---|---|---|
+| base | 0.0 | 0.3789 | 0.2432 | 0.8571 | 9.52 | 0.0 | 0.4616 | 73.2 |
+| exp1_r8_lr2e-4_ep2 | 0.0 | 0.7907 | 0.7727 | 0.8095 | 11.9 | 48.0 | 0.8901 | 86.1 |
+| exp2_r16_lr2e-4_ep2 | 0.0 | 0.8235 | 0.814 | 0.8333 | 11.9 | 48.0 | 0.8872 | 84.9 |
+| exp3_r32_lr2e-4_ep2 | 0.0 | 0.7816 | 0.7556 | 0.8095 | 7.14 | 36.0 | 0.9004 | 85.5 |
+| exp4_r16_lr5e-5_ep2 | 0.0 | 0.7952 | 0.8049 | 0.7857 | 14.29 | 44.0 | 0.8998 | 86.3 |
+| exp5_r16_lr2e-4_ep1 | 0.0 | 0.7619 | 0.7619 | 0.7619 | 14.29 | 48.0 | 0.886 | 87.6 |
+| exp6_r16_lr2e-4_ep2_v2 | 0.0 | 0.875 | 0.9211 | 0.8333 | 9.52 | 72.0 | 0.9583 | 81.2 |
+| exp6_r16_lr2e-4_ep2_v2_temp0.3 | 0.3 | 0.875 | 0.9211 | 0.8333 | 9.52 | 72.0 | 0.9583 | 77.2 |
+| exp6_r16_lr2e-4_ep2_v2_temp0.7 | 0.7 | 0.875 | 0.9211 | 0.8333 | 9.52 | 72.0 | 0.9583 | 76.9 |
+| exp6_r16_lr2e-4_ep2_v2_temp1.0 | 1.0 | 0.875 | 0.9211 | 0.8333 | 9.52 | 72.0 | 0.9546 | 74.5 |
+
+## Melhor modelo: `exp6_r16_lr2e-4_ep2_v2`
 
 **F1 por tipo de dado — Teste sintético**
 
 | Tipo | Precision | Recall | F1 | Suporte |
 |---|---|---|---|---|
 | NOME | 1.0 | 1.0 | 1.0 | 397 |
-| CPF | 1.0 | 1.0 | 1.0 | 129 |
+| CPF | 1.0 | 0.969 | 0.9843 | 129 |
 | RG | 1.0 | 1.0 | 1.0 | 49 |
 | TELEFONE | 1.0 | 1.0 | 1.0 | 157 |
 | EMAIL | 1.0 | 1.0 | 1.0 | 89 |
@@ -62,60 +94,55 @@ Textos com redação livre, fora dos templates do treino (`data/gerar_desafio.py
 
 | Tipo | Precision | Recall | F1 | Suporte |
 |---|---|---|---|---|
-| NOME | 0.9545 | 0.875 | 0.913 | 24 |
-| CPF | 0.8571 | 1.0 | 0.9231 | 6 |
-| RG | 0.8 | 1.0 | 0.8889 | 4 |
-| TELEFONE | 0.875 | 1.0 | 0.9333 | 7 |
-| EMAIL | 1.0 | 1.0 | 1.0 | 7 |
-| ENDERECO | 0.8333 | 1.0 | 0.9091 | 5 |
+| NOME | 1.0 | 1.0 | 1.0 | 24 |
+| CPF | 1.0 | 1.0 | 1.0 | 6 |
+| RG | 1.0 | 0.75 | 0.8571 | 4 |
+| TELEFONE | 1.0 | 1.0 | 1.0 | 7 |
+| EMAIL | 1.0 | 0.8571 | 0.9231 | 7 |
+| ENDERECO | 1.0 | 1.0 | 1.0 | 5 |
 | CEP | 1.0 | 0.75 | 0.8571 | 4 |
 
-## Exemplos do desafio: base × ajustado
+**F1 por tipo de dado — Desafio 2**
 
-- **Entrada:** Boa noite. Meu nome é Letícia Andrade Prado e estou tentando falar com vocês há três dias. Já liguei do meu celular (21) 99731-0042 e ninguém atende. O pedido é o 4471-88 e o rastreio QB928374651BR não atualiza.
-  - Base: Boa noite. [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]. O pedido é [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP].
-  - Ajustado: Boa noite. Meu nome é [NOME] e estou tentando falar com vocês há três dias. Já liguei do meu celular [TELEFONE] e ninguém atende. O pedido é o 4471-88 e o rastreio QB928374651BR não atualiza.
-  - Esperado: Boa noite. Meu nome é [NOME] e estou tentando falar com vocês há três dias. Já liguei do meu celular [TELEFONE] e ninguém atende. O pedido é o 4471-88 e o rastreio QB928374651BR não atualiza.
+| Tipo | Precision | Recall | F1 | Suporte |
+|---|---|---|---|---|
+| NOME | 0.9545 | 0.9545 | 0.9545 | 22 |
+| CPF | 1.0 | 0.6667 | 0.8 | 3 |
+| RG | 1.0 | 0.5 | 0.6667 | 2 |
+| TELEFONE | 0.75 | 1.0 | 0.8571 | 3 |
+| EMAIL | 1.0 | 0.75 | 0.8571 | 4 |
+| ENDERECO | 0.8 | 0.8 | 0.8 | 5 |
+| CEP | 1.0 | 0.3333 | 0.5 | 3 |
 
-- **Entrada:** cpf: 398 114 027 61 nome: Rodrigo Tavares — quero o reembolso do ingresso de R$ 189,90
-  - Base: [cpf: 398 114 027 61] [RG: 123456789012345678] [TELEFONE: 1234567890] [EMAIL: contato@empresa.com] [ENDERECO: Rua das Flores, 123, Cidade: São Paulo, CEP: 01234567] [CEP: 01234567]
-  - Ajustado: cpf: [CPF] nome: [NOME] — quero o reembolso do ingresso de R$ 189,90
-  - Esperado: cpf: [CPF] nome: [NOME] — quero o reembolso do ingresso de R$ 189,90
+## Exemplos do desafio 2: base × ajustado
 
-- **Entrada:** Pode mandar a nota pro email financeiro.ramos@outlook.com? A empresa é Ramos & Filhos Ltda, CNPJ 12.345.678/0001-95.
-  - Base: Pode mandar a nota pro email [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]. A empresa é Ramos & Filhos Ltda, CNPJ 12.345.678/0001-95.
-  - Ajustado: Pode mandar a nota pro email [EMAIL]? A empresa é [NOME], CNPJ [CPF].
-  - Esperado: Pode mandar a nota pro email [EMAIL]? A empresa é Ramos & Filhos Ltda, CNPJ 12.345.678/0001-95.
+- **Entrada:** Aqui é a Rosângela, da contabilidade. O boleto da Metalúrgica Forte Ltda (CNPJ 33.104.556/0001-08) venceu ontem.
+  - Base: [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]
+  - Ajustado: Aqui é a [NOME], da contabilidade. O boleto da Metalúrgica Forte Ltda (CNPJ 33.104.556/0001-08) venceu ontem.
+  - Esperado: Aqui é a [NOME], da contabilidade. O boleto da Metalúrgica Forte Ltda (CNPJ 33.104.556/0001-08) venceu ontem.
 
-- **Entrada:** Oi, sou a Bia, mãe do Davi Monteiro. Ele esqueceu a mochila na sala 12. Meu zap é 11 9 8222-1034.
-  - Base: Oi, sou [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]. Meu zap é [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP].
-  - Ajustado: Oi, sou a [NOME], mãe do [NOME]. Ele esqueceu a mochila na sala 12. Meu zap é [TELEFONE].
-  - Esperado: Oi, sou a [NOME], mãe do [NOME]. Ele esqueceu a mochila na sala 12. Meu zap é [TELEFONE].
+- **Entrada:** Sr. Valdir Campos, 67 anos, aposentado, mora na Rua Vergueiro, 2045, casa 3 e pediu visita técnica.
+  - Base: Sr. Valdir [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP].
+  - Ajustado: Sr. [NOME], 67 anos, aposentado, mora na [ENDERECO] e pediu visita técnica.
+  - Esperado: Sr. [NOME], 67 anos, aposentado, mora na [ENDERECO] e pediu visita técnica.
 
-- **Entrada:** Prezados,
+- **Entrada:** por favor encaminhar para a Dra. Simone Arantes o exame do paciente Wesley Rocha, quarto 12.
+  - Base: [EXAME DO PACIENTE Wesley Rocha, QUARTO 12]
+  - Ajustado: por favor encaminhar para a Dra. [NOME] o exame do paciente [NOME], quarto 12.
+  - Esperado: por favor encaminhar para a Dra. [NOME] o exame do paciente [NOME], quarto 12.
 
-Informo que me mudei. Novo endereço: Rua Professor Artur Ramos, 77, apto 904, Belo Horizonte, CEP 30140-120. Favor atualizar o cadastro do plano Premium 2026.
+- **Entrada:** Marcelo, 31 99102-7788, marcelo.ti@gmail.com
+  - Base: [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP].
+  - Ajustado: [NOME], [TELEFONE], [EMAIL]
+  - Esperado: [NOME], [TELEFONE], [EMAIL]
 
-Att,
-Cláudio Menezes
-  - Base: Prezados,
+- **Entrada:** Razão social: Supermercado Estrela do Norte. CNPJ: 08.552.761/0001-44. Endereço comercial: Av. Recife, 900.
+  - Base: Razão social: [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP].
+  - Ajustado: Razão social: Supermercado Estrela do Norte. CNPJ: 08.552.761/0001-44. Endereço comercial: [ENDERECO].
+  - Esperado: Razão social: Supermercado Estrela do Norte. CNPJ: 08.552.761/0001-44. Endereço comercial: Av. Recife, 900.
 
-Informo que me mudei. [NOME], [TELEFONE], [RG], [CPF], [ENDERECO], [CEP], [TELEFONE], [EMAIL], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE], [RG], [CPF], [TELEFONE],
-  - Ajustado: Prezados,
-
-Informo que me mudei. Novo endereço: [ENDERECO], Belo Horizonte, CEP [CEP]. Favor atualizar o cadastro do plano Premium 2026.
-
-Att,
-[NOME]
-  - Esperado: Prezados,
-
-Informo que me mudei. Novo endereço: [ENDERECO], Belo Horizonte, CEP [CEP]. Favor atualizar o cadastro do plano Premium 2026.
-
-Att,
-[NOME]
-
-- **Entrada:** o numero do meu rg é MG-14.552.903 e do cpf 07152966408, preciso da segunda via
-  - Base: [NOME], [RG], [CPF], [TELEFONE], [EMAIL], [ENDERECO], [CEP].
-  - Ajustado: o numero do meu rg é [RG] e do cpf [CPF], preciso da segunda via
-  - Esperado: o numero do meu rg é [RG] e do cpf [CPF], preciso da segunda via
+- **Entrada:** Oi Júlia, tudo bem? O seu código de rastreamento é NX448201937BR e a previsão é sexta.
+  - Base: Oi [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]. O seu código de rastreamento é [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP]. O seu código de rastreamento é [NOME], [CPF], [RG], [TELEFONE], [EMAIL], [ENDERECO], [CEP].
+  - Ajustado: Oi [NOME], tudo bem? O seu código de rastreamento é NX448201937BR e a previsão é sexta.
+  - Esperado: Oi [NOME], tudo bem? O seu código de rastreamento é NX448201937BR e a previsão é sexta.
 
