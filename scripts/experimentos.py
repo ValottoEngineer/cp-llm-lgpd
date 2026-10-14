@@ -82,23 +82,39 @@ def main():
         if not (res / f"{c['nome']}.json").exists():
             rodar([PY, "src/evaluate.py", "--nome", c["nome"], "--adapter", out, *limite_teste])
 
-    # Melhor experimento = maior F1; empate -> menor vazamento.
+    # Conjunto de desafio escrito à mão (textos fora dos templates).
+    desafio = RAIZ / "data" / "desafio.jsonl"
+    if not desafio.exists():
+        rodar([PY, "data/gerar_desafio.py"])
+    if not (res / "desafio_base.json").exists():
+        rodar([PY, "src/evaluate.py", "--nome", "desafio_base", "--data", desafio])
+    for c in configs:
+        if (outs / c["nome"] / "run_info.json").exists() and not (res / f"desafio_{c['nome']}.json").exists():
+            rodar([PY, "src/evaluate.py", "--nome", f"desafio_{c['nome']}", "--adapter", outs / c["nome"],
+                   "--data", desafio])
+
+    # Melhor experimento: menor vazamento no desafio -> maior F1 no desafio -> maior F1 no teste.
+    def geral(nome):
+        p = res / f"{nome}.json"
+        return json.loads(p.read_text(encoding="utf-8"))["metricas"]["geral"] if p.exists() else None
+
     candidatos = []
     for c in CONFIGS:
-        p = res / f"{c['nome']}.json"
-        if p.exists():
-            g = json.loads(p.read_text(encoding="utf-8"))["metricas"]["geral"]
-            candidatos.append((g["f1"], -g["vazamento_pct"], c["nome"]))
+        t, d = geral(c["nome"]), geral(f"desafio_{c['nome']}")
+        if t and d:
+            candidatos.append((-d["vazamento_pct"], d["f1"], t["f1"], c["nome"]))
     if not candidatos:
         return
-    melhor = max(candidatos)[2]
+    melhor = max(candidatos)[3]
     print(f"\nMelhor experimento: {melhor}")
 
+    # Parâmetros de geração: temperatura, no teste e no desafio.
     for t in TEMPERATURAS:
-        nome = f"{melhor}_temp{t}"
-        if not (res / f"{nome}.json").exists():
-            rodar([PY, "src/evaluate.py", "--nome", nome, "--adapter", outs / melhor,
-                   "--temperature", t, *limite_teste])
+        for prefixo, dados in (("", []), ("desafio_", ["--data", desafio])):
+            nome = f"{prefixo}{melhor}_temp{t}"
+            if not (res / f"{nome}.json").exists():
+                rodar([PY, "src/evaluate.py", "--nome", nome, "--adapter", outs / melhor,
+                       "--temperature", t, *dados, *([] if prefixo else limite_teste)])
 
     destino = outs / "melhor"
     if destino.exists():
