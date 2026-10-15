@@ -31,7 +31,7 @@ Saída   : Olá, meu nome é [NOME] e meu CPF é [CPF]. Quero cancelar o pedido 
 | **Dados** | 100% sintéticos, gerados por código próprio, em 3 versões, mais perguntas gerais respondidas pelo modelo base (autodestilação). |
 | **Experimentos** | 7 treinos em 3 rodadas (rank 8/16/32, lr 2e-4/5e-5, 1/2 épocas, dataset v1/v2/v3) + 3 temperaturas. |
 | **Avaliação** | Teste sintético (400) + **3 desafios escritos à mão**, cada um registrado no Git **antes** do treino que avalia + teste de conhecimento geral. |
-| **Resultado** | No desafio independente: vazamento de dados pessoais de **7,5% → 0%** e F1 de detecção de **0,42 → 0,98**, contra o modelo sem treino. |
+| **Resultado** | No desafio independente: vazamento de dados pessoais de **7,5% → 0%** e F1 de detecção de **0,42 → 0,98**, contra o modelo sem treino. Em 3 seeds: vazamento médio de **1,7% ± 1,4%** e F1 de detecção de **0,97 ± 0,01**. |
 | **Extras** | Camada de segurança por regex, LoRA fundido (+61% de velocidade), frontend com texto, lote (.txt/.csv) e prompt livre, 32 testes no CI. |
 
 ![Frontend](docs/frontend_anonimizar.png)
@@ -354,6 +354,27 @@ Fundir os pesos do LoRA no modelo deixa a geração **61% mais rápida**, com **
 O frontend usa o modo fundido e alterna para o modelo base com `modo_base()`, que desfunde e desliga o
 adaptador temporariamente.
 
+### Variância entre seeds
+
+Para saber se o resultado do modelo final é robusto ou foi sorte, a configuração do exp7 foi treinada mais duas vezes,
+com as seeds 13 e 2024, além da 42 original (`scripts/seeds.py`). A seed muda a inicialização do LoRA, a ordem dos
+exemplos e o dropout. Resultado completo em [`results/seeds_resumo.md`](results/seeds_resumo.md):
+
+| Desafio 3 (independente) | Média ± desvio | Seed 42 / 13 / 2024 |
+|---|---|---|
+| **Vazamento** | **1,7% ± 1,4%** | 0% / 2,5% / 2,5% |
+| **F1 de detecção** | **0,971 ± 0,007** | 0,976 / 0,963 / 0,975 |
+| F1 | 0,914 ± 0,053 | 0,878 / 0,889 / 0,975 |
+| Exato | 77,3% ± 9,2% | 72% / 72% / 88% |
+| Similaridade | 0,982 ± 0,010 | 0,981 / 0,973 / 0,992 |
+
+- **O vazamento zero da seed 42 teve um pouco de sorte:** nas outras seeds vazou 1 dado de 40.
+- **Ainda assim, o resultado é estável e bem melhor que o das rodadas anteriores:**
+  - vazamento médio de 1,7%, contra 12,5% do exp6 e 7,5% do exp2;
+  - F1 de detecção sempre entre 0,96 e 0,98.
+- **O F1 por tipo varia mais (0,88 a 0,98)**, porque depende de acertar o tipo do marcador em poucos casos.
+- No teste sintético, as 3 seeds dão 100% de acerto exato.
+
 ### Análise
 
 1. **O fine-tuning resolve a tarefa.** O modelo base entende a instrução, mas inventa marcadores (precision ~0,25), reescreve o texto e deixa vazar 7–14% dos dados. O modelo final chega a **0% de vazamento** e F1 de detecção de **0,98** no desafio independente.
@@ -537,7 +558,7 @@ notebooks/treino_colab.ipynb   alternativa de treino no Colab
 - **Rótulos subjetivos.** Alguns casos são discutíveis: o endereço comercial de uma empresa, ou um CEP citado como "errado". Escolhemos sempre e documentamos nos arquivos dos desafios.
 - **Ajuste fino nos desafios.** Cada versão do dataset e o regex foram ajustados olhando os erros de um desafio. Por isso cada desafio novo foi escrito antes do treino seguinte, e o desafio 3 é a medida final. Um desafio 4 seria necessário para avaliar uma eventual rodada 4.
 - **Tamanho do modelo.** O 0.6B foi escolhido pela restrição de hardware. Um modelo de 1.7B–4B, treinado com QLoRA no Colab (`notebooks/treino_colab.ipynb`), tende a generalizar melhor.
-- **Escopo.** Apenas uma seed por configuração; não medimos a variância entre execuções.
+- **Variância.** Só o modelo final foi repetido com 3 seeds; as demais configurações têm uma execução cada. Com desafios de ~40 dados, diferenças de 1 dado vazado ficam dentro da variação entre seeds.
 
 ## Referências
 
