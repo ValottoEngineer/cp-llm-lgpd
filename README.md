@@ -34,7 +34,9 @@ Saída   : Olá, meu nome é [NOME] e meu CPF é [CPF]. Quero cancelar o pedido 
 | **Resultado** | No desafio independente: vazamento de dados pessoais de **7,5% → 0%** e F1 de detecção de **0,42 → 0,98**, contra o modelo sem treino. Em 3 seeds: vazamento médio de **1,7% ± 1,4%** e F1 de detecção de **0,97 ± 0,01**. |
 | **Extras** | Camada de segurança por regex, LoRA fundido (+61% de velocidade), frontend com texto, lote (.txt/.csv) e prompt livre, 32 testes no CI. |
 
-![Frontend](docs/frontend_anonimizar.png)
+![Demonstração do frontend](docs/demo.gif)
+
+*Demonstração gravada na GTX 1060: anonimização de um texto, com a comparação contra o modelo sem treino e a tabela de dados encontrados, e de um arquivo CSV em lote. Os dados são fictícios.*
 
 **Rodar em 3 comandos** (Windows + GPU NVIDIA). O modelo treinado já vem no repositório:
 
